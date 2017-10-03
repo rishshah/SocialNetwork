@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SocialNetwork</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="error_username_required">Username cannot be empty</string>
+    <string name="error_password_required">Password cannot be empty</string>
+</resources>
