@@ -77,6 +77,7 @@ public class MyLoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.e("TAG--------D--", response);
+                        showProgress(false);
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
@@ -89,7 +90,7 @@ public class MyLoginActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             Log.e("TAG--------JSON EX--", e.toString());
                         }
-                        showProgress(false);
+
                     }
                 },
                 new Response.ErrorListener() {
