@@ -1,5 +1,6 @@
 package com.tower.socialnetwork;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -69,7 +70,7 @@ public class MyLoginActivity extends AppCompatActivity {
         showProgress(true);
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://10.42.0.196:8080/AndroidBackend/Login";
+        String url = "http://10.42.0.1:8080/AndroidBackend/Login";
 
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -83,7 +84,7 @@ public class MyLoginActivity extends AppCompatActivity {
                             if (jsonResponse.getBoolean("status")) {
                                 Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
                                 //start new activity
-
+                                navigateToHome(username);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
                             }
@@ -113,6 +114,10 @@ public class MyLoginActivity extends AppCompatActivity {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
+    }
+
+    private void navigateToHome(String username) {
+        startActivity(new Intent(this,HomeActivity.class).putExtra("id", username));
     }
 
     private void showProgress(boolean is_visible) {

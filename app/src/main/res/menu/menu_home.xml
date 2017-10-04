@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xml ns:tools="http://schemas.android.com/tools"
+    tools:context="com.tower.socialnetwork.HomeActivity">
+    <item
+        android:orderInCategory="100"
+        android:title="My Posts" />
+    <item
+        android:orderInCategory="101"
+        android:title="Add Post" />
+    <item
+        android:orderInCategory="102"
+        android:title="Search" />
+</menu>
