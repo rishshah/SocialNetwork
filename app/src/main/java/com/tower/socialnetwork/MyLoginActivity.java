@@ -19,6 +19,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public class MyLoginActivity extends AppCompatActivity {
     private EditText mUsername;
     private EditText mPassword;
     private View mProgressView;
-
+    private static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +71,14 @@ public class MyLoginActivity extends AppCompatActivity {
             return;
         showProgress(true);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://10.42.0.1:8080/AndroidBackend/Login";
+        CookieManager cookieManager =new CookieManager();
+        CookieHandler.setDefault(cookieManager);
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String loginUrl = SERVER_URL + "Login";
+        Log.e("TAG", loginUrl);
         // Request a json response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

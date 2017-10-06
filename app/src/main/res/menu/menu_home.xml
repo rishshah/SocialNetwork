@@ -1,14 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xml ns:tools="http://schemas.android.com/tools"
-    tools:context="com.tower.socialnetwork.HomeActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:orderInCategory="100"
-        android:title="My Posts" />
+        android:id="@+id/add_post"
+        android:orderInCategory="1"
+        android:title="Add Post"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="always"/>
     <item
-        android:orderInCategory="101"
-        android:title="Add Post" />
+        android:id="@+id/search"
+        android:orderInCategory="2"
+        android:title="Search"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="always"/>
     <item
-        android:orderInCategory="102"
-        android:title="Search" />
+        android:id="@+id/my_posts"
+        android:orderInCategory="3"
+        android:title="My Posts"
+        android:icon="@drawable/ic_home"
+        app:showAsAction="always"/>
+
 </menu>
