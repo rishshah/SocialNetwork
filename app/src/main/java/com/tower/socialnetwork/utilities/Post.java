@@ -51,4 +51,11 @@ public class Post {
     public List<Comment> getCommentList(){
         return comments;
     }
+    public void print(){
+        Log.e("DEBUG POST",postid + " " +text + "\n" );
+        for(Comment c:comments){
+            Log.e("DEBUG COMMENT", c.getCommentText());
+        }
+
+    }
 }

@@ -81,8 +81,9 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
 
             TableLayout replyContainer = (TableLayout) v.findViewById(R.id.table_show);
+            replyContainer.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+//            i.print();
 
             for (Comment comment : i.getCommentList()) {
                 View comments = inflater.inflate(R.layout.activity_commentview, null);

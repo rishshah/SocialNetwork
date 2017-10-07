@@ -92,15 +92,20 @@ public class HomeActivity extends AppCompatActivity {
                         showProgress(false);
                         List<String> values = new ArrayList<>();
                         List<Post> lPosts = new ArrayList<>();
+
                         try {
+
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
+
                                 JSONArray posts = jsonResponse.getJSONArray("data");
                                 for (int i=0; i<posts.length(); i++){
                                     JSONObject post = (JSONObject) posts.get(i);
                                     Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"),post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
                                     values.add(uPost.getPostText());
+
+
                                 }
 //                                addContentToList(values);
                                 addContentToList(lPosts);
@@ -124,15 +129,6 @@ public class HomeActivity extends AppCompatActivity {
         queue.add(stringRequest);
                 }
 
-//    private void addContentToList(List<String> values) {
-//        ListView listView = (ListView) findViewById(R.id.post_list);
-//
-//        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_postview,values);
-//
-////        ListView listView = (ListView) findViewById(R.id.mobile_list);
-//            listView.setAdapter(adapter);
-//
-//    }
 
     private void addContentToList(List<Post> values) {
         ListView listView = (ListView) findViewById(R.id.post_list);
