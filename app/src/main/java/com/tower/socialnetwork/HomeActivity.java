@@ -23,6 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.fragments.AddPostFragment;
 import com.tower.socialnetwork.fragments.ViewPostFragment;
+import com.tower.socialnetwork.utilities.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener {
-    private static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
     private View mProgressView;
 
     @Override
@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         getSupportActionBar().setTitle("Home");
 
         mProgressView = findViewById(R.id.login_progress);
-        displayViewPostFragment("SeePosts", true);
+        displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true);
     }
 
     @Override
@@ -58,11 +58,11 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.home:
-                displayViewPostFragment("SeeMyPosts", false);
+                displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, false);
                 return true;
 
             case R.id.my_posts:
-                displayViewPostFragment("SeePosts", false);
+                displayViewPostFragment(Constants.SEE_MY_POSTS, false);
                 return true;
 
             case R.id.add_post_button:
@@ -84,7 +84,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     @Override
     public void createPost(final String postText) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String loginUrl = SERVER_URL + "CreatePost";
+        String loginUrl = Constants.SERVER_URL + Constants.ADD_POST;
         showProgress(true);
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
@@ -97,7 +97,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 Toast.makeText(getApplicationContext(), "Post Created", Toast.LENGTH_SHORT).show();
-                                displayViewPostFragment("SeeMyPosts", false);
+                                displayViewPostFragment(Constants.SEE_MY_POSTS, false);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed to create post", Toast.LENGTH_SHORT).show();
                             }
@@ -120,9 +120,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                 return params;
             }
         };
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+       queue.add(stringRequest);
     }
 
     @Override
@@ -136,7 +134,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent().putExtra("action", "Back");
+        Intent intent = new Intent().putExtra("action", Constants.BACK);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -150,7 +148,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     }
 
     private void displayViewPostFragment(String action, boolean add) {
-        if (action.equals("SeeMyPosts")) {
+        if (action.equals(Constants.SEE_MY_POSTS)) {
             getSupportActionBar().setTitle("My Posts");
         } else {
             getSupportActionBar().setTitle("Home");
@@ -173,7 +171,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
     private void logout() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String loginUrl = SERVER_URL + "Logout";
+        String loginUrl = Constants.SERVER_URL + "Logout";
         showProgress(true);
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
@@ -185,7 +183,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
-                                Intent intent = new Intent().putExtra("action", "Logout");
+                                Intent intent = new Intent().putExtra("action", Constants.LOGOUT);
                                 setResult(RESULT_OK, intent);
                                 finish();
                             } else {

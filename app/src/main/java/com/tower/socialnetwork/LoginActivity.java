@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tower.socialnetwork.utilities.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mUsername;
     private EditText mPassword;
     private View mProgressView;
-    private static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         CookieHandler.setDefault(cookieManager);
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String loginUrl = SERVER_URL + "Login";
+        String loginUrl = Constants.SERVER_URL + "Login";
         Log.e("TAG", loginUrl);
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Couldn't login at all", error.toString());
+                        Log.e("TAG--------VOLLEY EX--", error.toString());
                         showProgress(false);
                         Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
                     }
@@ -134,9 +134,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                if (data.getStringExtra("action").equals("Back")) {
+                if (data.getStringExtra("action").equals(Constants.BACK)) {
                     finish();
-                } else if (data.getStringExtra("action").equals("Logout")) {
+                } else if (data.getStringExtra("action").equals(Constants.LOGOUT)) {
                     Toast.makeText(getApplicationContext(), "Successfully Logged Out", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -149,13 +149,5 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             mProgressView.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent().putExtra("action", "Back");
-        setResult(RESULT_OK, intent);
-        finish();
-        moveTaskToBack(true);
     }
 }

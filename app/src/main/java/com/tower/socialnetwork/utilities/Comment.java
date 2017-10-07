@@ -3,10 +3,6 @@ package com.tower.socialnetwork.utilities;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-/**
- * Created by bharat on 7/10/17.
- */
-
 public class Comment {
     private String uid;
     private String name;

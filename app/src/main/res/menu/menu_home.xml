@@ -21,14 +21,14 @@
 
     <item
         android:id="@+id/home"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="Home"
         android:icon="@drawable/ic_home"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/logout"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="Logout"
         android:icon="@drawable/ic_logout"
         app:showAsAction="ifRoom"/>

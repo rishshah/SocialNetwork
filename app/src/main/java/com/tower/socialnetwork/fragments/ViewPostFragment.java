@@ -32,7 +32,7 @@ import java.util.List;
 public class ViewPostFragment extends Fragment {
     private View view;
     private OnViewPostListener mOnViewPostListener;
-    public static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
+    public static final String SERVER_URL = "http://10.0.1.12:8080/Backend/";
 
     @Nullable
     @Override
@@ -56,6 +56,7 @@ public class ViewPostFragment extends Fragment {
     private void showPosts(String action) {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String loginUrl = SERVER_URL + action;
+        Log.e("TAG", loginUrl);
         mOnViewPostListener.showProgress(true);
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
@@ -81,7 +82,7 @@ public class ViewPostFragment extends Fragment {
                                 Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.e("TAG--------JSON EX--", e.toString());
                         }
                     }
                 },
@@ -89,6 +90,8 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getActivity().getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+                        Log.e("TAG--------VOLLEY EX--", error.toString());
+                        mOnViewPostListener.showProgress(false);
                     }
                 }
         );
