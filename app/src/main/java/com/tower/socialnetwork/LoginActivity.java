@@ -15,7 +15,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.tower.socialnetwork.fragments.ViewPostFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         showProgress(true);
 
-        CookieManager cookieManager =new CookieManager();
+        CookieManager cookieManager = new CookieManager();
         CookieHandler.setDefault(cookieManager);
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -91,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (jsonResponse.getBoolean("status")) {
                                 Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
                                 //start new activity
-                                navigateToHome(username);
+                                navigateToHome();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
                             }
@@ -104,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Couldn't login at all",error.toString());
+                        Log.e("Couldn't login at all", error.toString());
                         showProgress(false);
                         Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
                     }
@@ -125,8 +124,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void navigateToHome(String username) {
-        Intent intent = new Intent(this,HomeActivity.class);
+    private void navigateToHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivityForResult(intent, 1);
     }
 
@@ -134,11 +133,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-            if(resultCode == RESULT_OK) {
-                if(data.getStringExtra("action").equals("Back")){
+            if (resultCode == RESULT_OK) {
+                if (data.getStringExtra("action").equals("Back")) {
                     finish();
-                }
-                else if(data.getStringExtra("action").equals("Logout")){
+                } else if (data.getStringExtra("action").equals("Logout")) {
                     Toast.makeText(getApplicationContext(), "Successfully Logged Out", Toast.LENGTH_SHORT).show();
                 }
             }

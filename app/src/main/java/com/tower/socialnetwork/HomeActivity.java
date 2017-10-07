@@ -42,7 +42,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
         getSupportActionBar().setTitle("Home");
-        appBar.setTitleTextColor(getResources().getColor(R.color.colorLight));
 
         mProgressView = findViewById(R.id.login_progress);
         displayViewPostFragment("SeePosts", true);

@@ -1,6 +1,6 @@
 package com.tower.socialnetwork.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
@@ -33,28 +33,29 @@ public class ViewPostFragment extends Fragment {
     private View view;
     private OnViewPostListener mOnViewPostListener;
     public static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.view_post_fragment,container,false);
+        view = inflater.inflate(R.layout.view_post_fragment, container, false);
         return view;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mOnViewPostListener = (OnViewPostListener) activity;
+            mOnViewPostListener = (OnViewPostListener) context;
             Bundle bundle = this.getArguments();
             showPosts(bundle.getString("action"));
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnCreatePostListener");
+            throw new ClassCastException(context.toString() + " must implement OnCreatePostListener");
         }
     }
 
     private void showPosts(String action) {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String loginUrl = SERVER_URL + "SeeMyPosts";
+        String loginUrl = SERVER_URL + action;
         mOnViewPostListener.showProgress(true);
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
@@ -69,16 +70,15 @@ public class ViewPostFragment extends Fragment {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
-                                for (int i=0; i<posts.length(); i++){
+                                for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
-                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"),post.getJSONArray("Comment"));
+                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
                                     values.add(uPost.getPostText());
                                 }
                                 addContentToList(lPosts);
-                            }
-                            else{
-                                Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts" , Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -87,7 +87,7 @@ public class ViewPostFragment extends Fragment {
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse (VolleyError error){
+                    public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getActivity().getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -95,13 +95,13 @@ public class ViewPostFragment extends Fragment {
         queue.add(stringRequest);
     }
 
-    public  interface OnViewPostListener{
+    public interface OnViewPostListener {
         void showProgress(boolean is_visible);
     }
 
     private void addContentToList(List<Post> values) {
-        ListView listView = (ListView) view.findViewById(R.id.post_list);
-        ArrayAdapter adapter = new PostAdapter(getActivity(),R.layout.activity_postview, new ArrayList<Post>(values));
+        ListView listView = view.findViewById(R.id.post_list);
+        ArrayAdapter adapter = new PostAdapter(getActivity(), R.layout.activity_postview, new ArrayList<>(values));
         listView.setAdapter(adapter);
 
     }
