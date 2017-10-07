@@ -8,7 +8,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,28 +19,35 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tower.socialnetwork.utilities.Post;
 
-public class HomeActivity extends AppCompatActivity implements AbsListView.OnScrollListener {
-    private String id;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class HomeActivity extends AppCompatActivity {
     private static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
-
     private View mProgressView;
-    private int bufferPostCount = 10;
-    private int currentPage = 0;
-    private int postCount = 0;
-    private boolean isLoading = true;
-
+    private ListView mPostList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id = getIntent().getExtras().getString("id");
         setContentView(R.layout.activity_home);
+
+//        id = getIntent().getExtras().getString("id");
+
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
-        getSupportActionBar().setTitle("Welcome " + id + " !!");
+        getSupportActionBar().setTitle("Home");
         appBar.setTitleTextColor(getResources().getColor(R.color.colorLight));
+
+        mPostList = (ListView) findViewById(R.id.post_list);
         mProgressView = findViewById(R.id.login_progress);
+        showMyPosts();
     }
 
     @Override
@@ -81,17 +90,61 @@ public class HomeActivity extends AppCompatActivity implements AbsListView.OnScr
                     public void onResponse(String response) {
                         Log.e("TAG--------D--", response);
                         showProgress(false);
+                        List<String> values = new ArrayList<>();
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status")) {
+                                JSONArray posts = jsonResponse.getJSONArray("data");
+                                for (int i=0; i<posts.length(); i++){
+                                    JSONObject post = (JSONObject) posts.get(i);
+                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"));
+                                    values.add(uPost.text);
+                                }
+                                addContentToList(values);
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Failed to load your posts" , Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onErrorResponse (VolleyError error){
                         Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
-        // Add the request to the RequestQueue.
+                    // Add the request to the RequestQueue.
         queue.add(stringRequest);
+                }
+
+    private void addContentToList(List<String> values) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        mPostList.setAdapter(adapter);
+
+        mPostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // ListView Clicked item index
+                int itemPosition     = position;
+
+                // ListView Clicked item value
+                String  itemValue    = (String) mPostList.getItemAtPosition(position);
+
+                // Show Alert
+                Toast.makeText(getApplicationContext(),
+                        "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG)
+                        .show();
+
+            }
+
+        });
     }
 
     private void showProgress(boolean is_visible) {
@@ -99,32 +152,6 @@ public class HomeActivity extends AppCompatActivity implements AbsListView.OnScr
             mProgressView.setVisibility(View.VISIBLE);
         } else {
             mProgressView.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount < postCount) {
-            this.postCount = totalItemCount;
-            if (totalItemCount == 0) {
-                this.isLoading = true;
-            }
-        }
-
-        if (isLoading && (totalItemCount > postCount)) {
-            isLoading = false;
-            postCount = totalItemCount;
-            currentPage++;
-        }
-
-        if (!isLoading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + bufferPostCount)) {
-//            loadMore(currentPage + 1, totalItemCount);
-            isLoading = true;
         }
     }
 }
