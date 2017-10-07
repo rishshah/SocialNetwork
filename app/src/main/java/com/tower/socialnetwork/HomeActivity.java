@@ -1,5 +1,6 @@
 package com.tower.socialnetwork;
 
+
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.app.FragmentManager;
@@ -28,8 +29,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener{
-    public static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
+public class HomeActivity extends AppCompatActivity {
+    private static final String SERVER_URL = "http://10.42.0.196:8080/Backend/";
     private View mProgressView;
 
     @Override
@@ -39,6 +40,8 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
+        getSupportActionBar().setTitle("Home");
+        appBar.setTitleTextColor(getResources().getColor(R.color.colorLight));
 
         mProgressView = findViewById(R.id.login_progress);
         displayViewPostFragment("SeePosts", true);
@@ -122,8 +125,51 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         queue.add(stringRequest);
     }
 
-    @Override
-    public void showProgress(boolean is_visible) {
+    private void showMyPosts() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String loginUrl = SERVER_URL + "SeeMyPosts";
+        showProgress(true);
+        // Request a json response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("TAG--------D--", response);
+                        showProgress(false);
+                        List<String> values = new ArrayList<>();
+                        List<Post> lPosts = new ArrayList<>();
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status")) {
+                                JSONArray posts = jsonResponse.getJSONArray("data");
+                                for (int i=0; i<posts.length(); i++){
+                                    JSONObject post = (JSONObject) posts.get(i);
+                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"),post.getJSONArray("Comment"));
+                                    lPosts.add(uPost);
+                                    values.add(uPost.getPostText());
+                                }
+                                addContentToList(lPosts);
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Failed to load your posts" , Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse (VolleyError error){
+                        Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+                    // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+                }
+
+      private void showProgress(boolean is_visible) {
         if (is_visible) {
             mProgressView.setVisibility(View.VISIBLE);
         } else {

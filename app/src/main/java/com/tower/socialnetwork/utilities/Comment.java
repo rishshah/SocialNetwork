@@ -1,0 +1,38 @@
+package com.tower.socialnetwork.utilities;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
+/**
+ * Created by bharat on 7/10/17.
+ */
+
+public class Comment {
+    private String uid;
+    private String name;
+    private String text;
+    private Timestamp timestamp;
+
+    SimpleDateFormat datetimeFormatter = new SimpleDateFormat(
+            "MM-dd hh:mm");
+
+    public Comment(String uid, String name, String text, String timestamp){
+        this.uid = uid;
+        this.name = name;
+        this.text = text;
+        this.timestamp = Timestamp.valueOf(timestamp);
+    }
+
+    public String getCommentText(){
+        return text;
+    }
+
+    public String getCommenter(){
+        return name;
+    }
+
+    public String getCommentTime(){
+        return datetimeFormatter.format(timestamp);
+    }
+
+}
