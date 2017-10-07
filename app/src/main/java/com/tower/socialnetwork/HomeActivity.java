@@ -47,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
 
         mPostList = (ListView) findViewById(R.id.post_list);
         mProgressView = findViewById(R.id.login_progress);
+//        addContentToList();
         showMyPosts();
     }
 
@@ -122,30 +123,27 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
     private void addContentToList(List<String> values) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
-        mPostList.setAdapter(adapter);
+        ListView listView = (ListView) findViewById(R.id.post_list);
 
-        mPostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_listview,values);
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // ListView Clicked item index
-                int itemPosition     = position;
+//        ListView listView = (ListView) findViewById(R.id.mobile_list);
+            listView.setAdapter(adapter);
 
-                // ListView Clicked item value
-                String  itemValue    = (String) mPostList.getItemAtPosition(position);
-
-                // Show Alert
-                Toast.makeText(getApplicationContext(),
-                        "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG)
-                        .show();
-
-            }
-
-        });
     }
+
+
+    private void addContentToList() {
+        String[] mobileArray = {"Android","IPhone","WindowsMobile","Blackberry",
+                "WebOS","Ubuntu","Windows7","Max OS X"};
+
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_listview,mobileArray);
+
+        ListView listView = (ListView) findViewById(R.id.post_list);
+        listView.setAdapter(adapter);
+
+    }
+
 
     private void showProgress(boolean is_visible) {
         if (is_visible) {
