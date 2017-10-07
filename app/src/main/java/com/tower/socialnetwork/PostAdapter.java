@@ -119,41 +119,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 replyContainer.addView(tr);
             }
 
-/*
-            if(comment_list!=null){
-
-                LinearLayout list = (LinearLayout) v.findViewById(R.id.table_show);
-//                list.removeAllViews();
-
-                for (Comment comment : i.getCommentList()) {
-//                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                    View line = inflater.inflate(R.layout.activity_commentview, null);
-
-
-
-                    TextView commText = (TextView) v.findViewById(R.id.comment);
-                    TextView commWriter = (TextView) v.findViewById(R.id.comment_writer);
-                    TextView commTime = (TextView) v.findViewById(R.id.comment_time);
-
-                    // check to see if each individual textview is null.
-                    // if not, assign some text!
-                    if (commText != null) {
-                        commText.setText(comment.getCommentText());
-                    }
-                    if (commWriter != null) {
-                        commWriter.setText(comment.getCommenter());
-                    }
-
-                    if (commTime != null) {
-                        commTime.setText(comment.getCommentTime());
-                    }
-
-//                    list.addView(new LinearLayout(this));
-
-                }
-
-            }
-*/
         }
 
         // the view must be returned to our activity
