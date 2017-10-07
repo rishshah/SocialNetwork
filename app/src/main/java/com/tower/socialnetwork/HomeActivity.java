@@ -2,12 +2,15 @@ package com.tower.socialnetwork;
 
 
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.app.FragmentManager;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.fragments.AddPostFragment;
+import com.tower.socialnetwork.fragments.SearchResultsFragment;
 import com.tower.socialnetwork.fragments.ViewPostFragment;
 import com.tower.socialnetwork.utilities.Constants;
 
@@ -33,6 +37,7 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener {
     private View mProgressView;
+    private DataToSearchFragment mData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +53,45 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                displayViewPostFragment(Constants.SEE_MY_POSTS, false);
+                return false;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.e("TAG----Q--", query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.e("TAG----C--", newText);
+
+                if (mData != null) {
+                    if (newText.length() >= 3) {
+                        mData.sendData(newText);
+                    }
+                } else {
+                    displaySearchFragment();
+                }
+                return false;
+            }
+        });
         return true;
     }
 
@@ -67,9 +108,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
             case R.id.add_post_button:
                 displayAddPostFragment();
-                return true;
-
-            case R.id.search:
                 return true;
 
             case R.id.logout:
@@ -102,7 +140,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                                 Toast.makeText(getApplicationContext(), "Failed to create post", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.e("TAG--------JSON--EX--", e.toString());
                         }
                     }
                 },
@@ -120,7 +158,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                 return params;
             }
         };
-       queue.add(stringRequest);
+        queue.add(stringRequest);
     }
 
     @Override
@@ -169,6 +207,15 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         }
     }
 
+    private void displaySearchFragment() {
+        getSupportActionBar().setTitle("Search User");
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment = new SearchResultsFragment();
+        mData = (DataToSearchFragment) fragment;
+        fragmentTransaction.replace(R.id.fragment_contatiner, fragment).commit();
+    }
+
     private void logout() {
         RequestQueue queue = Volley.newRequestQueue(this);
         String loginUrl = Constants.SERVER_URL + "Logout";
@@ -203,5 +250,9 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         );
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    public interface DataToSearchFragment {
+        void sendData(String data);
     }
 }

@@ -2,35 +2,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/add_post_button"
-        android:orderInCategory="1"
-        android:title="Add Post"
         android:icon="@drawable/ic_add"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/search"
-        android:orderInCategory="2"
-        android:title="Search"
-        android:icon="@drawable/ic_search"
-        app:showAsAction="always"/>
+        android:orderInCategory="3"
+        android:title="Add Post"
+        app:showAsAction="collapseActionView|always" />
+
     <item
         android:id="@+id/my_posts"
-        android:orderInCategory="3"
-        android:title="My Posts"
         android:icon="@drawable/ic_my_posts"
-        app:showAsAction="always"/>
+        android:orderInCategory="2"
+        android:title="My Posts"
+        app:showAsAction="collapseActionView|always" />
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="1"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|always" />
 
     <item
         android:id="@+id/home"
+        android:icon="@drawable/ic_home"
         android:orderInCategory="4"
         android:title="Home"
-        android:icon="@drawable/ic_home"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/logout"
+        android:icon="@drawable/ic_logout"
         android:orderInCategory="5"
         android:title="Logout"
-        android:icon="@drawable/ic_logout"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

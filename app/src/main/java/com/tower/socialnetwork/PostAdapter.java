@@ -1,13 +1,10 @@
 package com.tower.socialnetwork;
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -16,7 +13,6 @@ import com.tower.socialnetwork.utilities.Comment;
 import com.tower.socialnetwork.utilities.Post;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bharat on 7/10/17.
@@ -49,7 +45,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         // to inflate it basically means to render, or show, the view.
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.activity_postview, null);
+            v = inflater.inflate(R.layout.item_post, null);
         }
 
 		/*
@@ -86,7 +82,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 //            i.print();
 
             for (Comment comment : i.getCommentList()) {
-                View comments = inflater.inflate(R.layout.activity_commentview, null);
+                View comments = inflater.inflate(R.layout.item_comment, null);
                 TextView commText = (TextView) comments.findViewById(R.id.comment);
                 TextView commWriter = (TextView) comments.findViewById(R.id.comment_writer);
                 TextView commTime = (TextView) comments.findViewById(R.id.comment_time);
