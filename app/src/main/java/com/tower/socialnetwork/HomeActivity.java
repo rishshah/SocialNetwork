@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -92,16 +91,19 @@ public class HomeActivity extends AppCompatActivity {
                         Log.e("TAG--------D--", response);
                         showProgress(false);
                         List<String> values = new ArrayList<>();
+                        List<Post> lPosts = new ArrayList<>();
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
                                 for (int i=0; i<posts.length(); i++){
                                     JSONObject post = (JSONObject) posts.get(i);
-                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"));
-                                    values.add(uPost.text);
+                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"),post.getJSONArray("Comment"));
+                                    lPosts.add(uPost);
+                                    values.add(uPost.getPostText());
                                 }
-                                addContentToList(values);
+//                                addContentToList(values);
+                                addContentToList(lPosts);
                             }
                             else{
                                 Toast.makeText(getApplicationContext(), "Failed to load your posts" , Toast.LENGTH_SHORT).show();
@@ -122,13 +124,20 @@ public class HomeActivity extends AppCompatActivity {
         queue.add(stringRequest);
                 }
 
-    private void addContentToList(List<String> values) {
+//    private void addContentToList(List<String> values) {
+//        ListView listView = (ListView) findViewById(R.id.post_list);
+//
+//        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_postview,values);
+//
+////        ListView listView = (ListView) findViewById(R.id.mobile_list);
+//            listView.setAdapter(adapter);
+//
+//    }
+
+    private void addContentToList(List<Post> values) {
         ListView listView = (ListView) findViewById(R.id.post_list);
-
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_listview,values);
-
-//        ListView listView = (ListView) findViewById(R.id.mobile_list);
-            listView.setAdapter(adapter);
+        ArrayAdapter adapter = new PostAdapter(this,R.layout.activity_postview, new ArrayList<Post>(values));
+        listView.setAdapter(adapter);
 
     }
 
@@ -137,7 +146,7 @@ public class HomeActivity extends AppCompatActivity {
         String[] mobileArray = {"Android","IPhone","WindowsMobile","Blackberry",
                 "WebOS","Ubuntu","Windows7","Max OS X"};
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_listview,mobileArray);
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_postview,mobileArray);
 
         ListView listView = (ListView) findViewById(R.id.post_list);
         listView.setAdapter(adapter);
