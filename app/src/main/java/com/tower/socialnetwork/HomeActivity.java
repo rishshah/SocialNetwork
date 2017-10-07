@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         setSupportActionBar(appBar);
         getSupportActionBar().setTitle("Home");
 
-        mProgressView = findViewById(R.id.login_progress);
+        mProgressView = findViewById(R.id.home_progress);
         displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true);
     }
 
