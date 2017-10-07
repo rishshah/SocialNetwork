@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tower.socialnetwork.PostAdapter;
 import com.tower.socialnetwork.R;
 import com.tower.socialnetwork.utilities.Post;
 
@@ -53,7 +54,7 @@ public class ViewPostFragment extends Fragment {
 
     private void showPosts(String action) {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String loginUrl = SERVER_URL + action;
+        String loginUrl = SERVER_URL + "SeeMyPosts";
         mOnViewPostListener.showProgress(true);
         // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
@@ -63,18 +64,21 @@ public class ViewPostFragment extends Fragment {
                         Log.e("TAG--------D--", response);
                         mOnViewPostListener.showProgress(false);
                         List<String> values = new ArrayList<>();
+                        List<Post> lPosts = new ArrayList<>();
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
-                                for (int i = 0; i < posts.length(); i++) {
+                                for (int i=0; i<posts.length(); i++){
                                     JSONObject post = (JSONObject) posts.get(i);
-                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"));
-                                    values.add(uPost.text);
+                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"),post.getJSONArray("Comment"));
+                                    lPosts.add(uPost);
+                                    values.add(uPost.getPostText());
                                 }
-                                addContentToList(values);
-                            } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "Failed to load posts", Toast.LENGTH_SHORT).show();
+                                addContentToList(lPosts);
+                            }
+                            else{
+                                Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts" , Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -83,68 +87,22 @@ public class ViewPostFragment extends Fragment {
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onErrorResponse (VolleyError error){
                         Toast.makeText(getActivity().getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
-        // Add the request to the RequestQueue.
         queue.add(stringRequest);
-
     }
 
     public  interface OnViewPostListener{
         void showProgress(boolean is_visible);
     }
 
-    private void addContentToList(List<String> values) {
-        ListView listView = view.findViewById(R.id.post_list);
-        ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.activity_listview, values);
+    private void addContentToList(List<Post> values) {
+        ListView listView = (ListView) view.findViewById(R.id.post_list);
+        ArrayAdapter adapter = new PostAdapter(getActivity(),R.layout.activity_postview, new ArrayList<Post>(values));
         listView.setAdapter(adapter);
 
     }
-    //    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_home);
-//
-//        Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
-//        setSupportActionBar(appBar);
-//        getSupportActionBar().setTitle("Home");
-//
-//        setProgressBar(findViewById(R.id.login_progress));
-//        showPosts(getIntent().getExtras().getString("action"));
-//    }
-//
-//    @Override
-//    public void onBackPressed() {
-//        if (getIntent().getExtras().getString("action").equals("SeeMyPosts")) {
-//            super.onBackPressed();
-//        }
-//        Intent intent = new Intent().putExtra("action", "Back");
-//        setResult(RESULT_OK, intent);
-//        finish();
-//        moveTaskToBack(true);
-//    }
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1) {
-//            if (resultCode == RESULT_OK) {
-//                if (data.getStringExtra("action").equals("PostCreated")) {
-//                    Toast.makeText(getApplicationContext(), "Post Created", Toast.LENGTH_SHORT).show();
-//                    showPosts("SeePosts");
-//                } else if (data.getStringExtra("action").equals("Back")) {
-//                    showPosts("SeePosts");
-//                } else if (data.getStringExtra("action").equals("SeeMyPosts")) {
-//                    showPosts("SeeMyPosts");
-//                } else if (data.getStringExtra("action").equals("Logout")) {
-//                    Intent intent = new Intent().putExtra("action", "Logout");
-//                    setResult(RESULT_OK, intent);
-//                    finish();
-//                }
-//            }
-//        }
-//    }
 }
