@@ -4,25 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.tower.socialnetwork.fragments.ViewPostFragment">
+    tools:context="com.tower.socialnetwork.fragments.AddPostFragment">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-    <RelativeLayout
+    <EditText
+        android:id="@+id/post_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/app_bar"
-        android:id="@+id/fragment_contatiner">
-    </RelativeLayout>
+        android:layout_marginTop="82dp"
+        android:hint="Write post..."
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
+    <Button
+        android:id="@+id/add_post_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_text"
+        android:text="Post"
+        android:layout_centerHorizontal="true" />
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -30,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
-        android:layout_below="@id/fragment_contatiner"
+        android:layout_below="@id/add_post_button"
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
