@@ -41,6 +41,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
     private ArrayList<Post> objects;
     private ArrayList<Boolean> moreCommentPressed;
+
     // View lookup cache
     private static class ViewHolder {
         TextView txtPost;
@@ -130,7 +131,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 //            i.print();
             int commentToDisplay = 0;
             for (Comment comment : i.getCommentList()) {
-                if(commentToDisplay == 3 && !moreCommentPressed.get(position)){
+                if (commentToDisplay == 3 && !moreCommentPressed.get(position)) {
                     break;
                 }
                 commentToDisplay++;

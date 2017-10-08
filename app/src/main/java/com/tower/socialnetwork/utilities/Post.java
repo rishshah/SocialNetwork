@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Post {
@@ -46,7 +47,8 @@ public class Post {
     }
 
     public String getPostTime(){
-        return datetimeFormatter.format(timestamp);
+        TimeDifference timediff = new TimeDifference(new Date(),timestamp);
+        return timediff.getDifferenceString();
     }
     public List<Comment> getCommentList(){
         return comments;
