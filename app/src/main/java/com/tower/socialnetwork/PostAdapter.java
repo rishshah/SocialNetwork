@@ -28,6 +28,8 @@ import org.json.JSONObject;
 
 import java.security.spec.ECField;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +40,7 @@ import java.util.Map;
 public class PostAdapter extends ArrayAdapter<Post> {
 
     private ArrayList<Post> objects;
-
+    private ArrayList<Boolean> moreCommentPressed;
     // View lookup cache
     private static class ViewHolder {
         TextView txtPost;
@@ -49,8 +51,9 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
     public PostAdapter(Context context, int resource, ArrayList<Post> data) {
         super(context, resource, data);
-
         this.objects = data;
+        this.moreCommentPressed = new ArrayList<Boolean>(Arrays.asList(new Boolean[data.size()]));
+        Collections.fill(this.moreCommentPressed, Boolean.FALSE);
     }
 
     @Override
@@ -85,6 +88,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
             TextView postWriter = v.findViewById(R.id.post_maker);
 
             Button commentButton = v.findViewById(R.id.add_comment_button);
+            Button moreCommentButton = v.findViewById(R.id.more_comment_button);
             final Integer postid = i.getPostId();
 
 //            ListView comment_list = (ListView) v.findViewById(R.id.comment_list);
@@ -111,17 +115,29 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 }
             });
 
+            moreCommentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View vi) {
+                    moreCommentPressed.set(position, !moreCommentPressed.get(position));
+                    updateView();
+                }
+            });
+
 
             TableLayout replyContainer = (TableLayout) v.findViewById(R.id.table_show);
             replyContainer.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //            i.print();
-
+            int commentToDisplay = 0;
             for (Comment comment : i.getCommentList()) {
+                if(commentToDisplay == 3 && !moreCommentPressed.get(position)){
+                    break;
+                }
+                commentToDisplay++;
                 View comments = inflater.inflate(R.layout.item_comment, null);
-                TextView commText = (TextView) comments.findViewById(R.id.comment);
-                TextView commWriter = (TextView) comments.findViewById(R.id.comment_writer);
-                TextView commTime = (TextView) comments.findViewById(R.id.comment_time);
+                TextView commText = comments.findViewById(R.id.comment);
+                TextView commWriter = comments.findViewById(R.id.comment_writer);
+                TextView commTime = comments.findViewById(R.id.comment_time);
 
                 // check to see if each individual textview is null.
                 // if not, assign some text!
@@ -173,7 +189,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                                 Toast.makeText(getContext().getApplicationContext(), "Comment Created", Toast.LENGTH_SHORT).show();
                                 Post p = objects.get(position);
                                 p.addComment(jsonResponse.getJSONArray("data"));
-                                updateView(position);
+                                updateView();
                             } else {
                                 Toast.makeText(getContext().getApplicationContext(), "Failed to create Comment", Toast.LENGTH_SHORT).show();
                             }
@@ -201,7 +217,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         queue.add(stringRequest);
     }
 
-    private void updateView(int position) {
+    private void updateView() {
         this.notifyDataSetChanged();
     }
 

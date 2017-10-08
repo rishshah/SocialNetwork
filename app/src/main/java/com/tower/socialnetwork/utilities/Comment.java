@@ -10,7 +10,7 @@ public class Comment {
     private Timestamp timestamp;
 
     SimpleDateFormat datetimeFormatter = new SimpleDateFormat(
-            "MM-dd hh:mm");
+            "MMM-dd   hh:mm a");
 
     public Comment(String uid, String name, String text, String timestamp){
         this.uid = uid;

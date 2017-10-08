@@ -19,7 +19,7 @@ public class Post {
     private List<Comment> comments;
 
     SimpleDateFormat datetimeFormatter = new SimpleDateFormat(
-            "MM-dd hh:mm");
+            "MMM-dd   hh:mm a");
 
     public Post(String uid, Integer postid, String text, String timestamp, JSONArray comments){
         this.uid = uid;
