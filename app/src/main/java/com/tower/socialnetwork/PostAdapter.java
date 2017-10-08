@@ -26,34 +26,21 @@ import com.tower.socialnetwork.utilities.Post;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by bharat on 7/10/17.
- */
-
 public class PostAdapter extends ArrayAdapter<Post> {
 
     private ArrayList<Post> objects;
     private ArrayList<Boolean> moreCommentPressed;
 
-    // View lookup cache
-    private static class ViewHolder {
-        TextView txtPost;
-        TextView txtTime;
-        TextView txtVersion;
-//        ImageView info;
-    }
-
     public PostAdapter(Context context, int resource, ArrayList<Post> data) {
         super(context, resource, data);
         this.objects = data;
-        this.moreCommentPressed = new ArrayList<Boolean>(Arrays.asList(new Boolean[data.size()]));
+        this.moreCommentPressed = new ArrayList<>(Arrays.asList(new Boolean[data.size()]));
         Collections.fill(this.moreCommentPressed, Boolean.FALSE);
     }
 
@@ -92,8 +79,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
             Button moreCommentButton = v.findViewById(R.id.more_comment_button);
             final Integer postid = i.getPostId();
 
-//            ListView comment_list = (ListView) v.findViewById(R.id.comment_list);
-
             // check to see if each individual textview is null.
             // if not, assign some text!
             if (post != null) {
@@ -126,10 +111,9 @@ public class PostAdapter extends ArrayAdapter<Post> {
             });
 
 
-            TableLayout replyContainer = (TableLayout) v.findViewById(R.id.table_show);
+            TableLayout replyContainer = v.findViewById(R.id.table_show);
             replyContainer.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            i.print();
             int commentToDisplay = 0;
             for (Comment comment : i.getCommentList()) {
                 if (commentToDisplay == 3 && !moreCommentPressed.get(position)) {
@@ -155,7 +139,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 }
 
 
-//for changing your tablelayout parameters
+                //for changing your tablelayout parameters
                 TableLayout.LayoutParams tableRowParams = new TableLayout.LayoutParams
                         (TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
 
@@ -170,16 +154,12 @@ public class PostAdapter extends ArrayAdapter<Post> {
             }
 
         }
-
-        // the view must be returned to our activity
         return v;
-
     }
 
     private void addComment(final int position, final String commentString, final Integer postid) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
         String loginUrl = Constants.SERVER_URL + Constants.ADD_COMMNENT;
-        // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {
                     @Override

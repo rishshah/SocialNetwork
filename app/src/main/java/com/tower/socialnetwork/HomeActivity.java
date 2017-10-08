@@ -2,8 +2,6 @@ package com.tower.socialnetwork;
 
 
 import android.app.FragmentTransaction;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.app.FragmentManager;
 import android.app.Fragment;
@@ -58,8 +56,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         getMenuInflater().inflate(R.menu.menu_home, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchMenuItem = menu.findItem(R.id.search);
         mSearchView = (SearchView) mSearchMenuItem.getActionView();
         mSearchView.setIconifiedByDefault(false);

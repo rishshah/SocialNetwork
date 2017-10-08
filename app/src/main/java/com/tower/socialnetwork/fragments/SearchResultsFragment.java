@@ -43,11 +43,11 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_fragment, container, false);
+        View view = inflater.inflate(R.layout.user_list, container, false);
 
         values = new ArrayList<>();
 
-        mList = view.findViewById(R.id.list);
+        mList = view.findViewById(R.id.user_list);
         registerForContextMenu(mList);
 
         mAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_selectable_list_item, values);
@@ -55,7 +55,6 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("TAG---D", mList.getItemAtPosition(position).toString());
                 if (!mList.getItemAtPosition(position).toString().equals(Constants.USER_NOT_FOUND))
                     mList.showContextMenuForChild(view);
             }
@@ -63,10 +62,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
         mList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("TAG---D", mList.getItemAtPosition(position).toString());
-                if (mList.getItemAtPosition(position).toString().equals(Constants.USER_NOT_FOUND))
-                    return true;
-                return false;
+                return mList.getItemAtPosition(position).toString().equals(Constants.USER_NOT_FOUND);
             }
         });
 
@@ -80,6 +76,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
         mSearchResults.showProgress(true);
         Log.e("TAG", loginUrl);
         // Request a json response from the provided URL.
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {
                     @Override
