@@ -5,10 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.app.FragmentManager;
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
@@ -33,7 +30,6 @@ import com.tower.socialnetwork.utilities.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,7 +108,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     }
 
     @Override
-    public void createPost(final String postText) {
+    public void createPost(final String postText, final String imageString) {
         RequestQueue queue = Volley.newRequestQueue(this);
         String loginUrl = Constants.SERVER_URL + Constants.ADD_POST;
         showProgress(true);
@@ -147,36 +143,11 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("content", postText);
+                params.put("image", imageString);
                 return params;
             }
         };
         queue.add(stringRequest);
-    }
-
-    @Override
-    public void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri filePath = data.getData();
-            try {
-                //Getting the Bitmap from Gallery
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                Log.e("TAG----D---BITMAP--", bitmap.toString());
-                //Setting the Bitmap to ImageView
-                //imageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                Log.e("TAG---IO--EX",e.toString());
-            }
-        }
     }
 
     @Override
@@ -254,6 +225,56 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         setResult(RESULT_OK, intent);
         finish();
     }
+
+//    private void uploadImage(){
+//        //Showing the progress dialog
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String s) {
+//                        //Disimissing the progress dialog
+//                        loading.dismiss();
+//                        //Showing toast message of the response
+//                        Toast.makeText(MainActivity.this, s , Toast.LENGTH_LONG).show();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError volleyError) {
+//                        //Dismissing the progress dialog
+//                        loading.dismiss();
+//
+//                        //Showing toast
+//                        Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+//                    }
+//                }){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                //Converting Bitmap to String
+//                String image = getStringImage(bitmap);
+//
+//                //Getting Image Name
+//                String name = editTextName.getText().toString().trim();
+//
+//                //Creating parameters
+//                Map<String,String> params = new Hashtable<String, String>();
+//
+//                //Adding parameters
+//                params.put(KEY_IMAGE, image);
+//                params.put(KEY_NAME, name);
+//
+//                //returning parameters
+//                return params;
+//            }
+//        };
+//
+//        //Creating a Request Queue
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//
+//        //Adding request to the queue
+//        requestQueue.add(stringRequest);
+//    }
 
     private void displayAddPostFragment() {
         closeSearchView();
