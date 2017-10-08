@@ -11,4 +11,5 @@ public class Constants {
     public static final String LOGOUT = "Logout";
     public static final String FOLLOW = "Follow";
     public static final String UNFOLLOW = "Unfollow";
+    public static final String USER_NOT_FOUND = "User Not Found";
 }

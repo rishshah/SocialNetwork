@@ -55,9 +55,21 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mList.showContextMenuForChild(view);
+                Log.e("TAG---D", mList.getItemAtPosition(position).toString());
+                if (!mList.getItemAtPosition(position).toString().equals(Constants.USER_NOT_FOUND))
+                    mList.showContextMenuForChild(view);
             }
         });
+        mList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("TAG---D", mList.getItemAtPosition(position).toString());
+                if (mList.getItemAtPosition(position).toString().equals(Constants.USER_NOT_FOUND))
+                    return true;
+                return false;
+            }
+        });
+
         return view;
     }
 
@@ -80,7 +92,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
                                 JSONArray results = jsonResponse.getJSONArray("data");
                                 results = (JSONArray) results.get(0);
                                 if (results.length() == 0) {
-                                    values.add("User Not Found");
+                                    values.add(Constants.USER_NOT_FOUND);
                                 } else {
                                     for (int i = 0; i < results.length(); i++) {
                                         JSONObject res = (JSONObject) results.get(i);
@@ -133,7 +145,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        Log.e("TAG----D--",values.get(info.position));
+        Log.e("TAG----D--", values.get(info.position));
 
         switch (item.getItemId()) {
             case R.id.follow_button:

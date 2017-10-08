@@ -62,7 +62,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchMenuItem = menu.findItem(R.id.search);
         mSearchView = (SearchView) mSearchMenuItem.getActionView();
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
