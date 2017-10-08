@@ -28,7 +28,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ViewPostFragment extends Fragment {
     private View view;
@@ -47,13 +49,13 @@ public class ViewPostFragment extends Fragment {
         try {
             mOnViewPostListener = (OnViewPostListener) context;
             Bundle bundle = this.getArguments();
-            showPosts(bundle.getString("action"));
+            showPosts(bundle.getString("action"), bundle.getString("data"));
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnCreatePostListener");
         }
     }
 
-    private void showPosts(String action) {
+    private void showPosts(String action, final String data) {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String loginUrl = Constants.SERVER_URL + action;
         Log.e("TAG", loginUrl);
@@ -64,8 +66,6 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         Log.e("TAG--------D--", response);
-                        mOnViewPostListener.showProgress(false);
-                        List<String> values = new ArrayList<>();
                         List<Post> lPosts = new ArrayList<>();
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
@@ -75,7 +75,6 @@ public class ViewPostFragment extends Fragment {
                                     JSONObject post = (JSONObject) posts.get(i);
                                     Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
-                                    values.add(uPost.getPostText());
                                 }
                                 addContentToList(lPosts);
                             } else {
@@ -84,6 +83,7 @@ public class ViewPostFragment extends Fragment {
                         } catch (JSONException e) {
                             Log.e("TAG--------JSON EX--", e.toString());
                         }
+                        mOnViewPostListener.showProgress(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -94,7 +94,16 @@ public class ViewPostFragment extends Fragment {
                         mOnViewPostListener.showProgress(false);
                     }
                 }
-        );
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                if(data != null) {
+                    params.put("uid", data);
+                }
+                return params;
+            }
+        };
         queue.add(stringRequest);
     }
 

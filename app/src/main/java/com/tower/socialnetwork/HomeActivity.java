@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -25,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.fragments.AddPostFragment;
+import com.tower.socialnetwork.fragments.SearchResults;
 import com.tower.socialnetwork.fragments.SearchResultsFragment;
 import com.tower.socialnetwork.fragments.ViewPostFragment;
 import com.tower.socialnetwork.utilities.Constants;
@@ -35,10 +35,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener {
+public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener, SearchResults{
     private View mProgressView;
     private DataToSearchFragment mData;
-
+    private SearchView mSearchView;
+    private MenuItem mSearchMenuItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,32 +50,24 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         getSupportActionBar().setTitle("Home");
 
         mProgressView = findViewById(R.id.home_progress);
-        displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true);
+        displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true,null);
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.menu_home, menu);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                displayViewPostFragment(Constants.SEE_MY_POSTS, false);
-                return false;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchMenuItem = menu.findItem(R.id.search);
+        mSearchView = (SearchView) mSearchMenuItem.getActionView();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.e("TAG----Q--", query);
+                mData = null;
                 return false;
             }
 
@@ -99,11 +92,11 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.home:
-                displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, false);
+                displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, false,null);
                 return true;
 
             case R.id.my_posts:
-                displayViewPostFragment(Constants.SEE_MY_POSTS, false);
+                displayViewPostFragment(Constants.SEE_MY_POSTS, false,null);
                 return true;
 
             case R.id.add_post_button:
@@ -130,18 +123,18 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                     @Override
                     public void onResponse(String response) {
                         Log.e("TAG--------D--", response);
-                        showProgress(false);
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 Toast.makeText(getApplicationContext(), "Post Created", Toast.LENGTH_SHORT).show();
-                                displayViewPostFragment(Constants.SEE_MY_POSTS, false);
+                                displayViewPostFragment(Constants.SEE_MY_POSTS, false, null);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed to create post", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             Log.e("TAG--------JSON--EX--", e.toString());
                         }
+                        showProgress(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -162,12 +155,72 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     }
 
     @Override
+    public void followUser(final String user, final boolean follow) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String loginUrl = Constants.SERVER_URL;
+        if(follow) {
+            loginUrl += Constants.FOLLOW;
+        } else{
+            loginUrl += Constants.UNFOLLOW;
+        }
+        showProgress(true);
+        // Request a json response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("TAG--------D--", response);
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status")) {
+                                if(follow){
+                                    Toast.makeText(getApplicationContext(), "Now following " + user, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), user + " Unfollowed", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(),  jsonResponse.getString("message") + " " + user, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.e("TAG--------JSON--EX--", e.toString());
+                        }
+                        showProgress(false);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("uid", user);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    @Override
     public void showProgress(boolean is_visible) {
         if (is_visible) {
             mProgressView.setVisibility(View.VISIBLE);
         } else {
             mProgressView.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void closeSearchView() {
+        if(mSearchView != null && mSearchMenuItem != null) {
+            mSearchView.clearFocus();
+            mSearchView.onActionViewCollapsed();
+            mSearchMenuItem.collapseActionView();
+        }
+        mData = null;
     }
 
     @Override
@@ -178,6 +231,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     }
 
     private void displayAddPostFragment() {
+        closeSearchView();
         getSupportActionBar().setTitle("New Post");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -185,7 +239,9 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         fragmentTransaction.replace(R.id.fragment_contatiner, fragment).commit();
     }
 
-    private void displayViewPostFragment(String action, boolean add) {
+    @Override
+    public void displayViewPostFragment(String action, boolean add, String data) {
+        closeSearchView();
         if (action.equals(Constants.SEE_MY_POSTS)) {
             getSupportActionBar().setTitle("My Posts");
         } else {
@@ -198,6 +254,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         Fragment fragment = new ViewPostFragment();
         Bundle bundle = new Bundle();
         bundle.putString("action", action);
+        bundle.putString("data", data);
         fragment.setArguments(bundle);
 
         if (add) {
@@ -226,7 +283,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                     @Override
                     public void onResponse(String response) {
                         Log.e("TAG--------D--", response);
-                        showProgress(false);
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
@@ -237,8 +293,9 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                                 Toast.makeText(getApplicationContext(), "Failed to logout", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.e("TAG--------JSON--EX--", e.toString());
                         }
+                        showProgress(false);
                     }
                 },
                 new Response.ErrorListener() {
