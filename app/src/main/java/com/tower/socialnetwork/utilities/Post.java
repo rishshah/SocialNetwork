@@ -58,4 +58,18 @@ public class Post {
         }
 
     }
+
+    public Integer getPostId() {
+        return postid;
+    }
+
+    public void addComment(JSONArray data) {
+        try {
+            JSONObject comment = (JSONObject) data.get(0);
+            Comment c= new Comment(comment.getString("uid"),comment.getString("name"),comment.getString("text"),comment.getString("timestamp"));
+            this.comments.add(c);
+        } catch (JSONException e) {
+            Log.e("TAG-----JSON--EX--", e.toString());
+        }
+    }
 }
