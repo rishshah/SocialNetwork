@@ -32,60 +32,38 @@
         android:text="27 July 2017 10 pm"
         android:textColor="@android:color/black" />
 
-    <!--<ImageView-->
-        <!--android:id="@+id/item_info"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:src="@android:drawable/ic_dialog_info" />-->
-    <!--<LinearLayoutView-->
-        <!--android:id="@+id/comment_list"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/post"-->
-        <!--android:layout_marginLeft="40dp"></LinearLayoutView>-->
 
     <TableLayout
         android:id="@+id/table_show"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/post"
-        android:layout_marginStart="50dp"
         android:background="@color/colorLight"
         android:textSize="12dp">
 
-        <!--<TableRow-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
-
-
     </TableLayout>
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerInParent="true">-->
+    <Button
+        android:id="@+id/add_comment_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/table_show"
+        android:background="@drawable/ic_send"
+        android:layout_alignParentEnd="true"
+        />
 
-        <!--<TextView-->
-            <!--android:id="@+id/version_heading"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="API: "-->
-            <!--android:textColor="@android:color/black"-->
-            <!--android:textStyle="bold" />-->
+    <EditText
+        android:id="@+id/new_comment_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Write a Comment !"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:layout_below="@id/table_show"
+        android:layout_toLeftOf="@id/add_comment_button"
+        />
 
-        <!--<TextView-->
-            <!--android:id="@+id/version_number"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="23"-->
-            <!--android:textAppearance="?android:attr/textAppearanceButton"-->
-            <!--android:textColor="@android:color/black"-->
-            <!--android:textStyle="bold" />-->
 
-    <!--</LinearLayout>-->
 
 </RelativeLayout>
 
