@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,11 +36,20 @@ import java.util.Map;
 public class ViewPostFragment extends Fragment {
     private View view;
     private OnViewPostListener mOnViewPostListener;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.list_fragment, container, false);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Bundle bundle = getArguments();
+                showPosts(bundle.getString("action"), bundle.getString("data"));
+            }
+        });
         return view;
     }
 
@@ -73,7 +83,7 @@ public class ViewPostFragment extends Fragment {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
                                 for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
-                                    Post uPost = new Post(post.getString("uid"),post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
+                                    Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
                                 }
                                 addContentToList(lPosts);
@@ -84,6 +94,7 @@ public class ViewPostFragment extends Fragment {
                             Log.e("TAG--------JSON EX--", e.toString());
                         }
                         mOnViewPostListener.showProgress(false);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -98,7 +109,7 @@ public class ViewPostFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                if(data != null) {
+                if (data != null) {
                     params.put("uid", data);
                 }
                 return params;
