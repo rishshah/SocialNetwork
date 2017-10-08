@@ -63,7 +63,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
             // These TextViews are created in the XML files we defined.
 
             TextView post = (TextView) v.findViewById(R.id.post);
-            TextView time = (TextView) v.findViewById(R.id.time);
+            TextView time = (TextView) v.findViewById(R.id.post_time);
 //            ListView comment_list = (ListView) v.findViewById(R.id.comment_list);
 
             // check to see if each individual textview is null.
