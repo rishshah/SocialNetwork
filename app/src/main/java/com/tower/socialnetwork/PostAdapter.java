@@ -112,6 +112,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 public void onClick(View vi) {
                     final String commentString = ((EditText) vCopy.findViewById(R.id.new_comment_text)).getText().toString();
                     addComment(position, commentString, postid);
+                    moreCommentPressed.set(position, true);
                     ((EditText) vCopy.findViewById(R.id.new_comment_text)).setText("");
                 }
             });
