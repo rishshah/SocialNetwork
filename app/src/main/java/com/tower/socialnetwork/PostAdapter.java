@@ -103,7 +103,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 time.setText(i.getPostTime());
             }
             if (postWriter != null) {
-                postWriter.setText(i.getUserId());
+                postWriter.setText(i.getPoster());
             }
 
             final View vCopy = v;

@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Post {
     private String uid;
+    private String poster;
     private Integer postid;
     private String text;
     private Timestamp timestamp;
@@ -22,8 +23,9 @@ public class Post {
     SimpleDateFormat datetimeFormatter = new SimpleDateFormat(
             "MMM-dd   hh:mm a");
 
-    public Post(String uid, Integer postid, String text, String timestamp, JSONArray comments){
+    public Post(String uid, String poster, Integer postid, String text, String timestamp, JSONArray comments){
         this.uid = uid;
+        this.poster = poster;
         this.postid = postid;
         this.text = text;
         this.timestamp = Timestamp.valueOf(timestamp);
@@ -63,6 +65,10 @@ public class Post {
 
     public Integer getPostId() {
         return postid;
+    }
+
+    public String getPoster() {
+        return poster;
     }
 
     public String getUserId() {
