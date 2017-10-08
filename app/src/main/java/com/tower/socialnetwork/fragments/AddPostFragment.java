@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 import com.tower.socialnetwork.R;
 
-public class AddPostFragment extends Fragment implements View.OnClickListener {
+public class AddPostFragment extends Fragment {
     private EditText mPostText;
     private OnCreatePostListener mOnCreatePostListener;
 
@@ -19,7 +19,20 @@ public class AddPostFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_post_fragment, container, false);
-        view.findViewById(R.id.add_post_button).setOnClickListener(this);
+        view.findViewById(R.id.add_post_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnCreatePostListener.createPost(mPostText.getText().toString());
+            }
+        });
+
+        view.findViewById(R.id.add_image_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnCreatePostListener.chooseImage();
+            }
+        });
+
         mPostText = view.findViewById(R.id.post_text);
         return view;
     }
@@ -34,12 +47,8 @@ public class AddPostFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        mOnCreatePostListener.createPost(mPostText.getText().toString());
-    }
-
     public interface OnCreatePostListener {
         void createPost(String postText);
+        void chooseImage();
     }
 }

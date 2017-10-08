@@ -21,8 +21,19 @@
         android:id="@+id/add_post_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/post_text"
         android:text="Post"
+        android:layout_below="@+id/post_text"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="56dp" />
+
+    <Button
+        android:id="@+id/add_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_text"
+        android:layout_marginRight="100dp"
+        android:layout_toLeftOf="@id/add_post_button"
+        android:text="Add Image"
         android:layout_centerHorizontal="true" />
 
     <ProgressBar
