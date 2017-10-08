@@ -73,7 +73,7 @@ public class ViewPostFragment extends Fragment {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
                                 for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
-                                    Post uPost = new Post(post.getString("uid"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
+                                    Post uPost = new Post(post.getString("uid"),post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
                                 }
                                 addContentToList(lPosts);
