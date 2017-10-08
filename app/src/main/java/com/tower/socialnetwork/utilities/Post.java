@@ -63,6 +63,10 @@ public class Post {
         return postid;
     }
 
+    public String getUserId() {
+        return uid;
+    }
+
     public void addComment(JSONArray data) {
         try {
             JSONObject comment = (JSONObject) data.get(0);

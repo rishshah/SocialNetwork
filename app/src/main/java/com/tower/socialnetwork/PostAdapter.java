@@ -82,6 +82,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
             TextView post = v.findViewById(R.id.post);
             TextView time = v.findViewById(R.id.post_time);
+            TextView postWriter = v.findViewById(R.id.post_maker);
+
             Button commentButton = v.findViewById(R.id.add_comment_button);
             final Integer postid = i.getPostId();
 
@@ -95,6 +97,10 @@ public class PostAdapter extends ArrayAdapter<Post> {
             if (time != null) {
                 time.setText(i.getPostTime());
             }
+            if (postWriter != null) {
+                postWriter.setText(i.getUserId());
+            }
+
             final View vCopy = v;
             commentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
