@@ -3,20 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#0000ab"
-    android:padding="10dp"
     android:layout_margin="5dp"
-    >
-    <TextView
-        android:id="@+id/post_maker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/post_time"
-        android:layout_alignLeft="@id/post"
-        android:text="Rishabh Shah"
-        android:textColor="#ffffff"
-        android:textSize="20dp"
-        android:textStyle="italic|bold" />
+    android:background="#0000ab"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/post"
@@ -26,8 +15,7 @@
         android:layout_below="@+id/post_maker"
         android:text="I shall say waht i have to say you can say what you have to say at the end it is Penguin who decides what needs to happen"
         android:textColor="#ffffff"
-        android:textSize="15dp"
-         />
+        android:textSize="16dp" />
 
 
     <TextView
@@ -36,40 +24,64 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:text="27 July 2017 10 pm"
-        android:textStyle="italic"
-        android:textSize="12dp"
-        android:textColor="@color/colorLight" />
+        android:textColor="@color/colorAccent"
+        android:textSize="13dp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/post_maker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/post"
+        android:layout_toLeftOf="@id/post_time"
+        android:text="Rishabh Shah"
+        android:textColor="@color/colorAccent"
+        android:textSize="17dp"
+        android:textStyle="italic" />
 
     <TableLayout
         android:id="@+id/table_show"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/post"
-        android:layout_marginStart="50dp"
-        android:background="@color/colorLight"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:background="#E7E7DA"
         android:textSize="12dp">
 
     </TableLayout>
+
+
+    <Button
+        android:id="@+id/more_comment_button"
+
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/table_show"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="-5dp"
+        android:background="@drawable/ic_more_comments" />
 
     <Button
         android:id="@+id/add_comment_button"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_below="@id/table_show"
-        android:background="@drawable/ic_send"
         android:layout_alignParentEnd="true"
-        />
+        android:layout_below="@id/more_comment_button"
+        android:background="@drawable/ic_send" />
 
     <EditText
         android:id="@+id/new_comment_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Write a Comment !"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        android:layout_below="@id/table_show"
+        android:layout_below="@id/more_comment_button"
         android:layout_toLeftOf="@id/add_comment_button"
-        />
+        android:ems="10"
+        android:hint="Write a Comment !"
+        android:textColorHint="#ffffff"
+        android:inputType="textMultiLine"
+        android:textSize="12dp"
+        android:textColor="#ffffff" />
 
 
 
