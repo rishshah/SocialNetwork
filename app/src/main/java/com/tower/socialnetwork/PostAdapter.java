@@ -1,18 +1,35 @@
 package com.tower.socialnetwork;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.utilities.Comment;
+import com.tower.socialnetwork.utilities.Constants;
 import com.tower.socialnetwork.utilities.Post;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.spec.ECField;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by bharat on 7/10/17.
@@ -36,7 +53,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
         this.objects = data;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         // assign the view we are converting to a local variable
         View v = convertView;
@@ -62,8 +80,11 @@ public class PostAdapter extends ArrayAdapter<Post> {
             // This is how you obtain a reference to the TextViews.
             // These TextViews are created in the XML files we defined.
 
-            TextView post = (TextView) v.findViewById(R.id.post);
-            TextView time = (TextView) v.findViewById(R.id.post_time);
+            TextView post = v.findViewById(R.id.post);
+            TextView time = v.findViewById(R.id.post_time);
+            Button commentButton = v.findViewById(R.id.add_comment_button);
+            final Integer postid = i.getPostId();
+
 //            ListView comment_list = (ListView) v.findViewById(R.id.comment_list);
 
             // check to see if each individual textview is null.
@@ -74,6 +95,15 @@ public class PostAdapter extends ArrayAdapter<Post> {
             if (time != null) {
                 time.setText(i.getPostTime());
             }
+            final View vCopy = v;
+            commentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View vi) {
+                    final String commentString = ((EditText) vCopy.findViewById(R.id.new_comment_text)).getText().toString();
+                    addComment(position, commentString, postid);
+                    ((EditText) vCopy.findViewById(R.id.new_comment_text)).setText("");
+                }
+            });
 
 
             TableLayout replyContainer = (TableLayout) v.findViewById(R.id.table_show);
@@ -122,5 +152,51 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
     }
 
+    private void addComment(final int position, final String commentString, final Integer postid) {
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        String loginUrl = Constants.SERVER_URL + Constants.ADD_COMMNENT;
+        // Request a json response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("TAG--------D--", response);
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status")) {
+                                Toast.makeText(getContext().getApplicationContext(), "Comment Created", Toast.LENGTH_SHORT).show();
+                                Post p = objects.get(position);
+                                p.addComment(jsonResponse.getJSONArray("data"));
+                                updateView(position);
+                            } else {
+                                Toast.makeText(getContext().getApplicationContext(), "Failed to create Comment", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.e("TAG--------JSON--EX--", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext().getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("content", commentString);
+                params.put("postid", postid.toString());
+                return params;
+            }
+
+        };
+        queue.add(stringRequest);
+    }
+
+    private void updateView(int position) {
+        this.notifyDataSetChanged();
+    }
 
 }
