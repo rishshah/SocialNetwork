@@ -40,7 +40,7 @@ public class ViewPostFragment extends Fragment {
     private View view;
     private OnViewPostListener mOnViewPostListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
+    private RequestQueue mQueue;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,11 +55,12 @@ public class ViewPostFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy(){
-        view = null;
-        mOnViewPostListener = null;
-        mSwipeRefreshLayout = null;
+    public void onStop () {
+        super.onStop();
         super.onDestroy();
+        if (mQueue != null) {
+            mQueue.cancelAll(this);
+        }
     }
 
     @Override
@@ -68,6 +69,7 @@ public class ViewPostFragment extends Fragment {
         try {
             mOnViewPostListener = (OnViewPostListener) context;
             Bundle bundle = this.getArguments();
+            mQueue = Volley.newRequestQueue(getActivity());
             showPosts(bundle.getString("action"), bundle.getString("data"));
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnCreatePostListener");
@@ -75,7 +77,6 @@ public class ViewPostFragment extends Fragment {
     }
 
     private void showPosts(String action, final String data) {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
         String loginUrl = Constants.SERVER_URL + action;
         Log.e("TAG", loginUrl);
         mOnViewPostListener.showProgress(true);
@@ -83,16 +84,16 @@ public class ViewPostFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        List<Post> lPosts = new ArrayList<>();
                         try {
+                            List<Post> lPosts = new ArrayList<>();
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
+                                lPosts.clear();
                                 for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if(!post.isNull("image")) {
-//                                        Log.e("TAG-------D---EX--", post.getString("image"));
                                         Log.e("IMAGEBITMAP", String.valueOf(getBitmapImage(post.getString("image"))));
                                         uPost.setImage(getBitmapImage(post.getString("image")));
                                     }
@@ -127,7 +128,7 @@ public class ViewPostFragment extends Fragment {
                 return params;
             }
         };
-        queue.add(stringRequest);
+        mQueue.add(stringRequest);
     }
 
     public interface OnViewPostListener {
@@ -141,12 +142,6 @@ public class ViewPostFragment extends Fragment {
 
     }
     private Bitmap getBitmapImage(String imageString){
-//        InputStream inputStream = new ByteArrayInputStream(Base64.decode(imageString.getBytes(), Base64.DEFAULT));
-//        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-//        byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
-//        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//        byte[] decodedBytes = Base64.decode(imageString, 0);
-//        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         byte[] decodedBytes = Base64.decode(
                 imageString.substring(imageString.indexOf(",")  + 1),
                 Base64.DEFAULT

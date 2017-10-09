@@ -52,8 +52,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
         // assign the view we are converting to a local variable
         View v = convertView;
 
-        // first check to see if the view is null. if so, we have to inflate it.
-        // to inflate it basically means to render, or show, the view.
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.item_post, null);

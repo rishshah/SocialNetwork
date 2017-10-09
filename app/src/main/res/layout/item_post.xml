@@ -40,13 +40,15 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="300dp"
-        android:layout_height="250dp"
+        android:layout_height="300dp"
         android:layout_below="@id/post"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="20dp"
         android:adjustViewBounds="true"
+        android:background="@color/colorPrimary"
+        android:padding="10dp"
         android:visibility="gone" />
 
     <TableLayout
@@ -67,7 +69,6 @@
 
     <Button
         android:id="@+id/more_comment_button"
-
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"

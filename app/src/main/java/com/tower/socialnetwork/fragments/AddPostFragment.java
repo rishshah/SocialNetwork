@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.app.ActivityCompat;
@@ -41,6 +42,7 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        System.gc();
         View view = inflater.inflate(R.layout.add_post_fragment, container, false);
         mImageView = view.findViewById(R.id.imageView);
         mImageButton = view.findViewById(R.id.add_post_button);
@@ -131,7 +133,7 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
 
     private String getStringImage(Bitmap bmp) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 10, outputStream);
         return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
     }
 }

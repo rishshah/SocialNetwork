@@ -41,6 +41,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
     private ListView mList;
     private ArrayAdapter mAdapter;
     private SearchResults mSearchResults;
+    private RequestQueue mQueue;
 
     @Nullable
     @Override
@@ -73,8 +74,18 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
     }
 
     @Override
+    public void onStop () {
+        super.onStop();
+        super.onDestroy();
+        if (mQueue != null) {
+            mQueue.cancelAll(this);
+        }
+    }
+
+    @Override
     public void sendData(final String searchText) {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        if(mQueue == null)
+            mQueue  = Volley.newRequestQueue(getActivity());
         String loginUrl = Constants.SERVER_URL + Constants.SEARCH;
         mSearchResults.showProgress(true);
         Log.e("TAG", loginUrl);
@@ -126,7 +137,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
                 return params;
             }
         };
-        queue.add(stringRequest);
+        mQueue.add(stringRequest);
     }
 
     @Override
@@ -161,7 +172,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
 
             case R.id.show_posts:
                 mSearchResults.closeSearchView();
-                mSearchResults.displayViewPostFragment(Constants.SEE_USER_POSTS, false, values.get(info.position));
+                mSearchResults.displayViewPostFragment(Constants.SEE_USER_POSTS, false, mUsers.get(info.position).getUid());
                 return true;
 
             case R.id.cancel:
