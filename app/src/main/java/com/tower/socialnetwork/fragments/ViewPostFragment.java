@@ -89,11 +89,11 @@ public class ViewPostFragment extends Fragment {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
                                 for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
+                                    Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if(!post.isNull("image")) {
                                         Log.e("TAG-------D---EX--", post.getString("image"));
-                                        Log.e("TAG-------D---EX--", getBitmapImage(post.getString("image")).toString());
+                                        uPost.setImage(getBitmapImage(post.getString("image")));
                                     }
-                                    Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
                                 }
                                 addContentToList(lPosts);
@@ -125,12 +125,6 @@ public class ViewPostFragment extends Fragment {
                 return params;
             }
         };
-
-//        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-//                30,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES + 10,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
         queue.add(stringRequest);
     }
 

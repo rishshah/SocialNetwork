@@ -1,5 +1,6 @@
 package com.tower.socialnetwork.utilities;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,6 +18,7 @@ public class Post {
     private String poster;
     private Integer postid;
     private String text;
+    private Bitmap imageBitmap;
     private Timestamp timestamp;
     private List<Comment> comments;
 
@@ -29,6 +31,7 @@ public class Post {
         this.postid = postid;
         this.text = text;
         this.timestamp = Timestamp.valueOf(timestamp);
+        this.imageBitmap = null;
         this.comments = new ArrayList<>();
         for (int i=0;i<comments.length() ; i++){
             try {
@@ -44,6 +47,9 @@ public class Post {
         }
     }
 
+    public void setImage(Bitmap bitmap){
+        this.imageBitmap = bitmap;
+    }
     public String getPostText(){
         return text;
     }
