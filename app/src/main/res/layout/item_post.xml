@@ -16,7 +16,6 @@
         android:textColor="@color/colorDarkBg"
         android:textSize="16dp" />
 
-
     <TextView
         android:id="@+id/post_time"
         android:layout_width="wrap_content"
@@ -38,32 +37,43 @@
         android:textSize="17dp"
         android:textStyle="italic|bold" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:layout_below="@id/post"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
+        android:adjustViewBounds="true"
+        android:visibility="gone" />
+
     <TableLayout
-        android:divider="?android:attr/dividerHorizontal"
-        android:showDividers="middle"
         android:id="@+id/table_show"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/post"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_below="@id/imageView"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="50dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
         android:background="#ffb000"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle"
         android:textSize="12dp">
 
     </TableLayout>
 
-
     <Button
         android:id="@+id/more_comment_button"
 
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/table_show"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/table_show"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/ic_more_comments" />
 
     <Button
@@ -83,9 +93,8 @@
         android:hint="Write a Comment..."
 
         android:inputType="textMultiLine"
-        android:textSize="13dp"
-        android:textColor="@color/colorDarkBg" />
-
+        android:textColor="@color/colorDarkBg"
+        android:textSize="13dp" />
 
 
 </RelativeLayout>

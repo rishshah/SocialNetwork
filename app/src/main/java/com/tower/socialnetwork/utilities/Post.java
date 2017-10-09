@@ -90,4 +90,8 @@ public class Post {
             Log.e("TAG-----JSON--EX--", e.toString());
         }
     }
+
+    public Bitmap getImage() {
+        return imageBitmap;
+    }
 }

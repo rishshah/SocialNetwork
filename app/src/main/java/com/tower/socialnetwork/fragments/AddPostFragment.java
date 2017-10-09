@@ -121,7 +121,6 @@ public class AddPostFragment extends Fragment implements PermissionCallback{
             Uri filePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
-                Log.e("TAG---D--", bitmap.toString());
                 mImageView.setImageBitmap(bitmap);
                 mImageView.setVisibility(View.VISIBLE);
                 mImageString = getStringImage(bitmap);
@@ -130,12 +129,20 @@ public class AddPostFragment extends Fragment implements PermissionCallback{
             }
         }
     }
+//
+//    private String getStringImage(Bitmap bmp){
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+//        byte[] imageBytes = baos.toByteArray();
+//        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+//        return encodedImage;
+//    }
+
 
     private String getStringImage(Bitmap bmp){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodedImage;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+
+        return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
     }
 }

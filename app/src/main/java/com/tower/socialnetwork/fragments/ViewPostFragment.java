@@ -81,7 +81,7 @@ public class ViewPostFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("TAG--------D--", response);
+//                        Log.e("TAG--------D--", response);
                         List<Post> lPosts = new ArrayList<>();
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
@@ -91,7 +91,8 @@ public class ViewPostFragment extends Fragment {
                                     JSONObject post = (JSONObject) posts.get(i);
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if(!post.isNull("image")) {
-                                        Log.e("TAG-------D---EX--", post.getString("image"));
+//                                        Log.e("TAG-------D---EX--", post.getString("image"));
+                                        Log.e("IMAGEBITMAP", String.valueOf(getBitmapImage(post.getString("image"))));
                                         uPost.setImage(getBitmapImage(post.getString("image")));
                                     }
                                     lPosts.add(uPost);
@@ -139,8 +140,16 @@ public class ViewPostFragment extends Fragment {
 
     }
     private Bitmap getBitmapImage(String imageString){
-        InputStream inputStream = new ByteArrayInputStream(Base64.decode(imageString.getBytes(), Base64.DEFAULT));
-        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-        return bitmap;
+//        InputStream inputStream = new ByteArrayInputStream(Base64.decode(imageString.getBytes(), Base64.DEFAULT));
+//        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+//        byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
+//        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//        byte[] decodedBytes = Base64.decode(imageString, 0);
+//        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        byte[] decodedBytes = Base64.decode(
+                imageString.substring(imageString.indexOf(",")  + 1),
+                Base64.DEFAULT
+        );
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }
