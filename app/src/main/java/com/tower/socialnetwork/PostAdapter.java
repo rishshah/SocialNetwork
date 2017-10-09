@@ -106,7 +106,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 @Override
                 public void onClick(View vi) {
                     moreCommentPressed.set(position, !moreCommentPressed.get(position));
-                    updateView();
+                    notifyDataSetChanged();
                 }
             });
 
@@ -152,7 +152,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 TableRow tr = (TableRow) comments;
                 replyContainer.addView(tr);
             }
-
         }
         return v;
     }
@@ -171,7 +170,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                                 Toast.makeText(getContext().getApplicationContext(), "Comment Created", Toast.LENGTH_SHORT).show();
                                 Post p = objects.get(position);
                                 p.addComment(jsonResponse.getJSONArray("data"));
-                                updateView();
+                                notifyDataSetChanged();
                             } else {
                                 Toast.makeText(getContext().getApplicationContext(), "Failed to create Comment", Toast.LENGTH_SHORT).show();
                             }
@@ -198,9 +197,4 @@ public class PostAdapter extends ArrayAdapter<Post> {
         };
         queue.add(stringRequest);
     }
-
-    private void updateView() {
-        this.notifyDataSetChanged();
-    }
-
 }

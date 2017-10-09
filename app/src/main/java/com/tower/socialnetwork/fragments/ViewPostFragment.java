@@ -1,10 +1,13 @@
 package com.tower.socialnetwork.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +89,10 @@ public class ViewPostFragment extends Fragment {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
                                 for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
+                                    if(!post.isNull("image")) {
+                                        Log.e("TAG-------D---EX--", post.getString("image"));
+                                        Log.e("TAG-------D---EX--", getBitmapImage(post.getString("image")).toString());
+                                    }
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     lPosts.add(uPost);
                                 }
@@ -115,6 +125,12 @@ public class ViewPostFragment extends Fragment {
                 return params;
             }
         };
+
+//        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+//                30,
+//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES + 10,
+//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         queue.add(stringRequest);
     }
 
@@ -127,5 +143,10 @@ public class ViewPostFragment extends Fragment {
         ArrayAdapter adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
         listView.setAdapter(adapter);
 
+    }
+    private Bitmap getBitmapImage(String imageString){
+        InputStream inputStream = new ByteArrayInputStream(Base64.decode(imageString.getBytes(), Base64.DEFAULT));
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+        return bitmap;
     }
 }

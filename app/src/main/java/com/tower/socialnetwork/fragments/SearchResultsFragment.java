@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.HomeActivity;
 import com.tower.socialnetwork.R;
 import com.tower.socialnetwork.utilities.Constants;
+import com.tower.socialnetwork.utilities.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 public class SearchResultsFragment extends Fragment implements HomeActivity.DataToSearchFragment {
     private List<String> values;
+    private List<User> mUsers;
     private ListView mList;
     private ArrayAdapter mAdapter;
     private SearchResults mSearchResults;
@@ -46,6 +48,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
         View view = inflater.inflate(R.layout.user_list, container, false);
 
         values = new ArrayList<>();
+        mUsers = new ArrayList<>();
 
         mList = view.findViewById(R.id.user_list);
         registerForContextMenu(mList);
@@ -84,6 +87,7 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
                         Log.e("TAG--------D--", response);
                         try {
                             values.clear();
+                            mUsers.clear();
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 JSONArray results = jsonResponse.getJSONArray("data");
@@ -93,7 +97,9 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
                                 } else {
                                     for (int i = 0; i < results.length(); i++) {
                                         JSONObject res = (JSONObject) results.get(i);
-                                        values.add(res.getString("uid"));
+                                        User user = new User(res.getString("name"), res.getString("uid"), res.getString("email"));
+                                        mUsers.add(user);
+                                        values.add(user.toString());
                                     }
                                 }
                                 mAdapter.notifyDataSetChanged();
@@ -142,15 +148,15 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        Log.e("TAG----D--", values.get(info.position));
+        Log.e("TAG----D--", mUsers.get(info.position).getUid());
 
         switch (item.getItemId()) {
             case R.id.follow_button:
-                mSearchResults.followUser(values.get(info.position), true);
+                mSearchResults.followUser(mUsers.get(info.position).getUid(), true);
                 return true;
 
             case R.id.unfollow_button:
-                mSearchResults.followUser(values.get(info.position), false);
+                mSearchResults.followUser(mUsers.get(info.position).getUid(), false);
                 return true;
 
             case R.id.show_posts:

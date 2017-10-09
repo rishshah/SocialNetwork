@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,12 +24,14 @@ import android.widget.ImageView;
 
 import com.tower.socialnetwork.R;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPostFragment extends Fragment {
+public class AddPostFragment extends Fragment implements PermissionCallback{
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int IMAGE_CHOOSE_ACTIVITY = 2;
     private EditText mPostText;
@@ -99,8 +102,7 @@ public class AddPostFragment extends Fragment {
         return readStatus && writeStatus;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void permissionGrantedCallback(int requestCode, String permissions[], int[] grantResults){
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -111,7 +113,6 @@ public class AddPostFragment extends Fragment {
             }
         }
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.fragments.AddPostFragment;
+import com.tower.socialnetwork.fragments.PermissionCallback;
 import com.tower.socialnetwork.fragments.SearchResults;
 import com.tower.socialnetwork.fragments.SearchResultsFragment;
 import com.tower.socialnetwork.fragments.ViewPostFragment;
@@ -38,6 +39,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     private DataToSearchFragment mData;
     private SearchView mSearchView;
     private MenuItem mSearchMenuItem;
+    private PermissionCallback permissionCallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -226,6 +228,14 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         finish();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if(permissionCallback != null){
+            permissionCallback.permissionGrantedCallback(requestCode, permissions, grantResults);
+        } else{
+            Log.e("TAG---D--ERR PCB","");
+        }
+    }
 //    private void uploadImage(){
 //        //Showing the progress dialog
 //
@@ -282,6 +292,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment = new AddPostFragment();
+        permissionCallback = (PermissionCallback) fragment;
         fragmentTransaction.replace(R.id.fragment_contatiner, fragment).commit();
     }
 
