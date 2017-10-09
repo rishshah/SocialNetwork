@@ -1,11 +1,11 @@
 package com.tower.socialnetwork.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,14 +24,12 @@ import android.widget.ImageView;
 
 import com.tower.socialnetwork.R;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPostFragment extends Fragment implements PermissionCallback{
+public class AddPostFragment extends Fragment implements PermissionCallback {
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int IMAGE_CHOOSE_ACTIVITY = 2;
     private EditText mPostText;
@@ -56,7 +54,7 @@ public class AddPostFragment extends Fragment implements PermissionCallback{
         view.findViewById(R.id.add_image_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(handlePermissions()){
+                if (handlePermissions()) {
                     chooseImage();
                 }
             }
@@ -92,17 +90,17 @@ public class AddPostFragment extends Fragment implements PermissionCallback{
         boolean writeStatus = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
         List<String> permissionRequests = new ArrayList<>();
-        if(!readStatus)
+        if (!readStatus)
             permissionRequests.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        if(!writeStatus)
+        if (!writeStatus)
             permissionRequests.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(!readStatus || !writeStatus)
-           ActivityCompat.requestPermissions(getActivity(), permissionRequests.toArray(new String[0]), MY_PERMISSIONS_REQUEST);
+        if (!readStatus || !writeStatus)
+            ActivityCompat.requestPermissions(getActivity(), permissionRequests.toArray(new String[0]), MY_PERMISSIONS_REQUEST);
 
         return readStatus && writeStatus;
     }
 
-    public void permissionGrantedCallback(int requestCode, String permissions[], int[] grantResults){
+    public void permissionGrantedCallback(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -113,11 +111,12 @@ public class AddPostFragment extends Fragment implements PermissionCallback{
             }
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == IMAGE_CHOOSE_ACTIVITY && resultCode == getActivity().RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == IMAGE_CHOOSE_ACTIVITY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
@@ -129,20 +128,10 @@ public class AddPostFragment extends Fragment implements PermissionCallback{
             }
         }
     }
-//
-//    private String getStringImage(Bitmap bmp){
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bmp.compress(Bitmap.CompressFormat.JPEG, 70, baos);
-//        byte[] imageBytes = baos.toByteArray();
-//        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-//        return encodedImage;
-//    }
 
-
-    private String getStringImage(Bitmap bmp){
+    private String getStringImage(Bitmap bmp) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
-
+        bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
         return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
     }
 }

@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,8 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,8 +49,6 @@ public class ViewPostFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Bundle bundle = getArguments();
-                showPosts(bundle.getString("action"), bundle.getString("data"));
             }
         });
         return view;
@@ -84,12 +79,10 @@ public class ViewPostFragment extends Fragment {
         String loginUrl = Constants.SERVER_URL + action;
         Log.e("TAG", loginUrl);
         mOnViewPostListener.showProgress(true);
-        // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-//                        Log.e("TAG--------D--", response);
                         List<Post> lPosts = new ArrayList<>();
                         try {
                             JSONObject jsonResponse = new JSONObject(response);

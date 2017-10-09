@@ -236,55 +236,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
             Log.e("TAG---D--ERR PCB","");
         }
     }
-//    private void uploadImage(){
-//        //Showing the progress dialog
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String s) {
-//                        //Disimissing the progress dialog
-//                        loading.dismiss();
-//                        //Showing toast message of the response
-//                        Toast.makeText(MainActivity.this, s , Toast.LENGTH_LONG).show();
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError volleyError) {
-//                        //Dismissing the progress dialog
-//                        loading.dismiss();
-//
-//                        //Showing toast
-//                        Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
-//                    }
-//                }){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                //Converting Bitmap to String
-//                String image = getStringImage(bitmap);
-//
-//                //Getting Image Name
-//                String name = editTextName.getText().toString().trim();
-//
-//                //Creating parameters
-//                Map<String,String> params = new Hashtable<String, String>();
-//
-//                //Adding parameters
-//                params.put(KEY_IMAGE, image);
-//                params.put(KEY_NAME, name);
-//
-//                //returning parameters
-//                return params;
-//            }
-//        };
-//
-//        //Creating a Request Queue
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//
-//        //Adding request to the queue
-//        requestQueue.add(stringRequest);
-//    }
 
     private void displayAddPostFragment() {
         closeSearchView();

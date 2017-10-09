@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,9 +20,6 @@ public class Post {
     private Bitmap imageBitmap;
     private Timestamp timestamp;
     private List<Comment> comments;
-
-    SimpleDateFormat datetimeFormatter = new SimpleDateFormat(
-            "MMM-dd   hh:mm a");
 
     public Post(String uid, String poster, Integer postid, String text, String timestamp, JSONArray comments){
         this.uid = uid;
@@ -50,6 +46,7 @@ public class Post {
     public void setImage(Bitmap bitmap){
         this.imageBitmap = bitmap;
     }
+
     public String getPostText(){
         return text;
     }
@@ -58,15 +55,9 @@ public class Post {
         TimeDifference timediff = new TimeDifference(new Date(),timestamp);
         return timediff.getDifferenceString();
     }
+
     public List<Comment> getCommentList(){
         return comments;
-    }
-    public void print(){
-        Log.e("DEBUG POST",postid + " " +text + "\n" );
-        for(Comment c:comments){
-            Log.e("DEBUG COMMENT", c.getCommentText());
-        }
-
     }
 
     public Integer getPostId() {
@@ -75,10 +66,6 @@ public class Post {
 
     public String getPoster() {
         return poster;
-    }
-
-    public String getUserId() {
-        return uid;
     }
 
     public void addComment(JSONArray data) {

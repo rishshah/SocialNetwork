@@ -2,7 +2,6 @@ package com.tower.socialnetwork;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,31 +59,15 @@ public class PostAdapter extends ArrayAdapter<Post> {
             v = inflater.inflate(R.layout.item_post, null);
         }
 
-		/*
-         * Recall that the variable position is sent in as an argument to this method.
-		 * The variable simply refers to the position of the current object in the list. (The ArrayAdapter
-		 * iterates through the list we sent it)
-		 *
-		 * Therefore, i refers to the current Item object.
-		 */
-        Post i = objects.get(position);
-
+		Post i = objects.get(position);
         if (i != null) {
-
-            // This is how you obtain a reference to the TextViews.
-            // These TextViews are created in the XML files we defined.
 
             TextView post = v.findViewById(R.id.post);
             TextView time = v.findViewById(R.id.post_time);
             TextView postWriter = v.findViewById(R.id.post_maker);
 
+            ImageView image = v.findViewById(R.id.imageView);
 
-            Button commentButton = v.findViewById(R.id.add_comment_button);
-            Button moreCommentButton = v.findViewById(R.id.more_comment_button);
-            final Integer postid = i.getPostId();
-
-            // check to see if each individual textview is null.
-            // if not, assign some text!
             if (post != null) {
                 post.setText(i.getPostText());
             }
@@ -94,17 +77,25 @@ public class PostAdapter extends ArrayAdapter<Post> {
             if (postWriter != null) {
                 postWriter.setText(i.getPoster());
             }
-
-            ImageView image = v.findViewById(R.id.imageView);
             if (image != null) {
-                Bitmap img = i.getImage();
+                Bitmap bitmapImage = i.getImage();
                 image.setVisibility(View.GONE);
-                if (img != null) {
-                    image.setImageBitmap(img);
+                if (bitmapImage != null) {
+                    image.setImageBitmap(bitmapImage);
                     image.setVisibility(View.VISIBLE);
                 }
             }
+
+            Button commentButton = v.findViewById(R.id.add_comment_button);
+            Button moreCommentButton = v.findViewById(R.id.more_comment_button);
+
+            final Integer postid = i.getPostId();
             final View vCopy = v;
+            if(i.getCommentList().size() <= 3){
+                moreCommentButton.setVisibility(View.GONE);
+            } else{
+                moreCommentButton.setVisibility(View.VISIBLE);
+            }
             commentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View vi) {
@@ -114,7 +105,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
                     ((EditText) vCopy.findViewById(R.id.new_comment_text)).setText("");
                 }
             });
-
             moreCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View vi) {
@@ -123,36 +113,34 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 }
             });
 
-
             TableLayout replyContainer = v.findViewById(R.id.table_show);
-            replyContainer.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            replyContainer.removeAllViews();
+
             int commentToDisplay = 0;
             for (Comment comment : i.getCommentList()) {
+
                 if (commentToDisplay == 3 && !moreCommentPressed.get(position)) {
                     break;
                 }
                 commentToDisplay++;
+
                 View comments = inflater.inflate(R.layout.item_comment, null);
+
                 TextView commText = comments.findViewById(R.id.comment);
                 TextView commWriter = comments.findViewById(R.id.comment_writer);
                 TextView commTime = comments.findViewById(R.id.comment_time);
 
-                // check to see if each individual textview is null.
-                // if not, assign some text!
                 if (commText != null) {
                     commText.setText(comment.getCommentText());
                 }
                 if (commWriter != null) {
                     commWriter.setText(comment.getCommenter());
                 }
-
                 if (commTime != null) {
                     commTime.setText(comment.getCommentTime());
                 }
 
-
-                //for changing your tablelayout parameters
                 TableLayout.LayoutParams tableRowParams = new TableLayout.LayoutParams
                         (TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
 
