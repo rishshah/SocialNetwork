@@ -60,6 +60,14 @@ public class ViewPostFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy(){
+        view = null;
+        mOnViewPostListener = null;
+        mSwipeRefreshLayout = null;
+        super.onDestroy();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
