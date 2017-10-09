@@ -1,6 +1,8 @@
 package com.tower.socialnetwork;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -75,6 +78,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
             TextView time = v.findViewById(R.id.post_time);
             TextView postWriter = v.findViewById(R.id.post_maker);
 
+
             Button commentButton = v.findViewById(R.id.add_comment_button);
             Button moreCommentButton = v.findViewById(R.id.more_comment_button);
             final Integer postid = i.getPostId();
@@ -91,6 +95,15 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 postWriter.setText(i.getPoster());
             }
 
+            ImageView image = v.findViewById(R.id.imageView);
+            if (image != null) {
+                Bitmap img = i.getImage();
+                image.setVisibility(View.GONE);
+                if (img != null) {
+                    image.setImageBitmap(img);
+                    image.setVisibility(View.VISIBLE);
+                }
+            }
             final View vCopy = v;
             commentButton.setOnClickListener(new View.OnClickListener() {
                 @Override

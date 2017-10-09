@@ -293,7 +293,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment = new AddPostFragment();
         permissionCallback = (PermissionCallback) fragment;
-        fragmentTransaction.replace(R.id.fragment_contatiner, fragment).commit();
+        fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
     }
 
     @Override
@@ -315,9 +315,9 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         fragment.setArguments(bundle);
 
         if (add) {
-            fragmentTransaction.add(R.id.fragment_contatiner, fragment).commit();
+            fragmentTransaction.add(R.id.fragment_container, fragment).commit();
         } else {
-            fragmentTransaction.replace(R.id.fragment_contatiner, fragment).commit();
+            fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
         }
     }
 
@@ -327,7 +327,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment = new SearchResultsFragment();
         mData = (DataToSearchFragment) fragment;
-        fragmentTransaction.replace(R.id.fragment_contatiner, fragment).commit();
+        fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
     }
 
     private void logout() {
