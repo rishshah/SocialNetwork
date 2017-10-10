@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +42,14 @@ public class ViewPostFragment extends Fragment {
     private OnViewPostListener mOnViewPostListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RequestQueue mQueue;
+    private List<Post> lPosts;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.list_fragment, container, false);
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
+        lPosts = new ArrayList<>();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -57,10 +61,21 @@ public class ViewPostFragment extends Fragment {
     @Override
     public void onStop () {
         super.onStop();
-        super.onDestroy();
+        view = null;
         if (mQueue != null) {
             mQueue.cancelAll(this);
+            mQueue = null;
         }
+        if(lPosts != null){
+            for (Post p:lPosts){
+                if(p.getImage() != null){
+                    p.setImage(null);
+                }
+            }
+            lPosts = null;
+        }
+        super.onDestroy();
+        System.gc();
     }
 
     @Override
@@ -77,6 +92,9 @@ public class ViewPostFragment extends Fragment {
     }
 
     private void showPosts(String action, final String data) {
+        if(mQueue == null){
+            mQueue = Volley.newRequestQueue(getActivity());
+        }
         String loginUrl = Constants.SERVER_URL + action;
         Log.e("TAG", loginUrl);
         mOnViewPostListener.showProgress(true);
@@ -85,7 +103,11 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            List<Post> lPosts = new ArrayList<>();
+                            if(lPosts != null){
+                                lPosts.clear();
+                            } else{
+                                lPosts = new ArrayList<>();
+                            }
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
                                 JSONArray posts = jsonResponse.getJSONArray("data");
@@ -94,8 +116,9 @@ public class ViewPostFragment extends Fragment {
                                     JSONObject post = (JSONObject) posts.get(i);
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if(!post.isNull("image")) {
-                                        Log.e("IMAGEBITMAP", String.valueOf(getBitmapImage(post.getString("image"))));
-                                        uPost.setImage(getBitmapImage(post.getString("image")));
+                                        Bitmap x = getBitmapImage(post.getString("image"));
+                                        Log.e("IMAGEBITMAP", x.toString());
+                                        uPost.setImage(x);
                                     }
                                     lPosts.add(uPost);
                                 }
@@ -146,6 +169,7 @@ public class ViewPostFragment extends Fragment {
                 imageString.substring(imageString.indexOf(",")  + 1),
                 Base64.DEFAULT
         );
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        final WeakReference<Bitmap> mBitmapReference = new WeakReference<>(BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length));
+        return mBitmapReference.get();
     }
 }

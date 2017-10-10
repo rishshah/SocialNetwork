@@ -2,6 +2,7 @@ package com.tower.socialnetwork;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +99,10 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 @Override
                 public void onClick(View vi) {
                     final String commentString = ((EditText) vCopy.findViewById(R.id.new_comment_text)).getText().toString();
+                    if (TextUtils.isEmpty(commentString)) {
+                        ((EditText) vCopy.findViewById(R.id.new_comment_text)).setError("Error");
+                        return;
+                    }
                     addComment(position, commentString, postid);
                     moreCommentPressed.set(position, true);
                     ((EditText) vCopy.findViewById(R.id.new_comment_text)).setText("");

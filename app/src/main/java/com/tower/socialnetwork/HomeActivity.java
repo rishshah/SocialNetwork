@@ -40,6 +40,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     private SearchView mSearchView;
     private MenuItem mSearchMenuItem;
     private PermissionCallback permissionCallback;
+    private RequestQueue mQueue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         getSupportActionBar().setTitle("Home");
 
         mProgressView = findViewById(R.id.home_progress);
+        mQueue = Volley.newRequestQueue(this);
         displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true,null);
     }
 
@@ -111,7 +113,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
     @Override
     public void createPost(final String postText, final String imageString) {
-        RequestQueue queue = Volley.newRequestQueue(this);
         String loginUrl = Constants.SERVER_URL + Constants.ADD_POST;
         showProgress(true);
         // Request a json response from the provided URL.
@@ -144,17 +145,18 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
+                if(imageString != null) {
+                    params.put("image", imageString);
+                }
                 params.put("content", postText);
-                params.put("image", imageString);
                 return params;
             }
         };
-        queue.add(stringRequest);
+        mQueue.add(stringRequest);
     }
 
     @Override
     public void followUser(final String user, final boolean follow) {
-        RequestQueue queue = Volley.newRequestQueue(this);
         String loginUrl = Constants.SERVER_URL;
         if(follow) {
             loginUrl += Constants.FOLLOW;
@@ -199,7 +201,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                 return params;
             }
         };
-        queue.add(stringRequest);
+        mQueue.add(stringRequest);
     }
 
     @Override
@@ -219,13 +221,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
             mSearchMenuItem.collapseActionView();
         }
         mData = null;
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent().putExtra("action", Constants.BACK);
-        setResult(RESULT_OK, intent);
-        finish();
     }
 
     @Override
@@ -282,7 +277,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     }
 
     private void logout() {
-        RequestQueue queue = Volley.newRequestQueue(this);
         String loginUrl = Constants.SERVER_URL + "Logout";
         showProgress(true);
         // Request a json response from the provided URL.
@@ -294,8 +288,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
-                                Intent intent = new Intent().putExtra("action", Constants.LOGOUT);
-                                setResult(RESULT_OK, intent);
                                 finish();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed to logout", Toast.LENGTH_SHORT).show();
@@ -314,7 +306,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                 }
         );
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        mQueue.add(stringRequest);
     }
 
     public interface DataToSearchFragment {

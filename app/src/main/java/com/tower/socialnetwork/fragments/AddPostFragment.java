@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,10 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(mPostText.getText().toString())) {
+                    mPostText.setError(getString(R.string.error_password_required));
+                    return;
+                }
                 mOnCreatePostListener.createPost(mPostText.getText().toString(), mImageString);
             }
         });
@@ -135,5 +140,11 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 10, outputStream);
         return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        super.onDestroy();
     }
 }
