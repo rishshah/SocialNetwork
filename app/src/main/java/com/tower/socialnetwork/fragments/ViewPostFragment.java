@@ -1,12 +1,13 @@
 package com.tower.socialnetwork.fragments;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +41,6 @@ import java.util.Map;
 public class ViewPostFragment extends Fragment {
     private View view;
     private OnViewPostListener mOnViewPostListener;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RequestQueue mQueue;
     private List<Post> lPosts;
 
@@ -48,13 +48,7 @@ public class ViewPostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.list_fragment, container, false);
-        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
         lPosts = new ArrayList<>();
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-            }
-        });
         return view;
     }
 
@@ -68,8 +62,8 @@ public class ViewPostFragment extends Fragment {
         }
         if(lPosts != null){
             for (Post p:lPosts){
-                if(p.getImage() != null){
-                    p.setImage(null);
+                if(p.getImage() != null && !p.getImage().isRecycled()){
+                    p.getImage().recycle();
                 }
             }
             lPosts = null;
@@ -117,7 +111,7 @@ public class ViewPostFragment extends Fragment {
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if(!post.isNull("image")) {
                                         Bitmap x = getBitmapImage(post.getString("image"));
-                                        Log.e("IMAGEBITMAP", x.toString());
+                                        Log.e("IMAGEBITMAP",String.valueOf(sizeOf(x)));
                                         uPost.setImage(x);
                                     }
                                     lPosts.add(uPost);
@@ -130,7 +124,6 @@ public class ViewPostFragment extends Fragment {
                             Log.e("TAG--------JSON EX--", e.toString());
                         }
                         mOnViewPostListener.showProgress(false);
-                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -159,17 +152,35 @@ public class ViewPostFragment extends Fragment {
     }
 
     private void addContentToList(List<Post> values) {
-        ListView listView = view.findViewById(R.id.list);
-        ArrayAdapter adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
-        listView.setAdapter(adapter);
-
+        try {
+            ListView listView = view.findViewById(R.id.list);
+            ArrayAdapter adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
+            listView.setAdapter(adapter);
+        } catch ( NullPointerException e){
+            Log.e("NULL pTR", e.toString());
+        }
     }
+
     private Bitmap getBitmapImage(String imageString){
         byte[] decodedBytes = Base64.decode(
                 imageString.substring(imageString.indexOf(",")  + 1),
                 Base64.DEFAULT
         );
-        final WeakReference<Bitmap> mBitmapReference = new WeakReference<>(BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length));
+
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inSampleSize = 4;
+        final WeakReference<Bitmap> mBitmapReference = new WeakReference<>(BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length, o));
         return mBitmapReference.get();
     }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    protected int sizeOf(Bitmap data) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+            return data.getRowBytes() * data.getHeight();
+        } else {
+            return data.getByteCount();
+        }
+    }
 }
+
+

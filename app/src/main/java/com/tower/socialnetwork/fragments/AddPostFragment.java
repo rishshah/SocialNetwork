@@ -35,10 +35,12 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int IMAGE_CHOOSE_ACTIVITY = 2;
     private EditText mPostText;
+    private Bitmap bitmap;
     private ImageView mImageView;
     private Button mImageButton;
     private String mImageString = null;
     private OnCreatePostListener mOnCreatePostListener;
+    private boolean imagePresent;
 
     @Nullable
     @Override
@@ -47,11 +49,12 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
         View view = inflater.inflate(R.layout.add_post_fragment, container, false);
         mImageView = view.findViewById(R.id.imageView);
         mImageButton = view.findViewById(R.id.add_post_button);
+        imagePresent = false;
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(mPostText.getText().toString())) {
-                    mPostText.setError(getString(R.string.error_password_required));
+                if (TextUtils.isEmpty(mPostText.getText().toString()) && !imagePresent) {
+                    mPostText.setError("Text Or Image required");
                     return;
                 }
                 mOnCreatePostListener.createPost(mPostText.getText().toString(), mImageString);
@@ -126,10 +129,12 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
         if (requestCode == IMAGE_CHOOSE_ACTIVITY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
                 mImageView.setImageBitmap(bitmap);
                 mImageView.setVisibility(View.VISIBLE);
                 mImageString = getStringImage(bitmap);
+                imagePresent = true;
+                mPostText.setError(null);
             } catch (IOException e) {
                 Log.e("TAG---IO--EX", e.toString());
             }
@@ -138,13 +143,16 @@ public class AddPostFragment extends Fragment implements PermissionCallback {
 
     private String getStringImage(Bitmap bmp) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 10, outputStream);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+        Log.e("STRING BMP", String.valueOf(Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT).length()));
         return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if(bitmap !=null && !bitmap.isRecycled()) bitmap.recycle();
+        System.gc();
         super.onDestroy();
     }
 }
