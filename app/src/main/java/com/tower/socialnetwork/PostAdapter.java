@@ -44,6 +44,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
     public PostAdapter(Context context, int resource, ArrayList<Post> data) {
         super(context, resource, data);
         this.objects = data;
+        Collections.reverse(this.objects);
         this.moreCommentPressed = new ArrayList<>(Arrays.asList(new Boolean[data.size()]));
         Collections.fill(this.moreCommentPressed, Boolean.FALSE);
     }
@@ -165,7 +166,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
     }
 
     public void updateData(List<Post> values){
-
         for(Post v: values){
             insert(v,0);
         }
