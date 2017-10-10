@@ -26,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.tower.socialnetwork.PostAdapter;
 import com.tower.socialnetwork.R;
 import com.tower.socialnetwork.utilities.Constants;
+import com.tower.socialnetwork.utilities.InfiniteScrollListener;
 import com.tower.socialnetwork.utilities.Post;
 
 import org.json.JSONArray;
@@ -39,30 +40,45 @@ import java.util.List;
 import java.util.Map;
 
 public class ViewPostFragment extends Fragment {
+    private static final int LIMIT = 10;
     private View view;
     private OnViewPostListener mOnViewPostListener;
     private RequestQueue mQueue;
     private List<Post> lPosts;
+    private ListView listView;
+    private PostAdapter adapter;
+    private InfiniteScrollListener isl;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.list_fragment, container, false);
         lPosts = new ArrayList<>();
+        listView = view.findViewById(R.id.list);
+        adapter = null;
+        isl = new InfiniteScrollListener() {
+            @Override
+            public void getMorePosts(int i) {
+                Bundle bundle = getArguments();
+                Log.e(" OFFSET TO ASK FOR", String.valueOf(LIMIT * (i - 1)));
+                showPosts(bundle.getString("action"), bundle.getString("data"), LIMIT * (i - 1));
+            }
+        };
+        listView.setOnScrollListener(isl);
         return view;
     }
 
     @Override
-    public void onStop () {
+    public void onStop() {
         super.onStop();
         view = null;
         if (mQueue != null) {
             mQueue.cancelAll(this);
             mQueue = null;
         }
-        if(lPosts != null){
-            for (Post p:lPosts){
-                if(p.getImage() != null && !p.getImage().isRecycled()){
+        if (lPosts != null) {
+            for (Post p : lPosts) {
+                if (p.getImage() != null && !p.getImage().isRecycled()) {
                     p.getImage().recycle();
                 }
             }
@@ -79,14 +95,14 @@ public class ViewPostFragment extends Fragment {
             mOnViewPostListener = (OnViewPostListener) context;
             Bundle bundle = this.getArguments();
             mQueue = Volley.newRequestQueue(getActivity());
-            showPosts(bundle.getString("action"), bundle.getString("data"));
+//            showPosts(bundle.getString("action"), bundle.getString("data"),0);
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnCreatePostListener");
         }
     }
 
-    private void showPosts(String action, final String data) {
-        if(mQueue == null){
+    private void showPosts(String action, final String data, final int offset) {
+        if (mQueue == null) {
             mQueue = Volley.newRequestQueue(getActivity());
         }
         String loginUrl = Constants.SERVER_URL + action;
@@ -97,9 +113,9 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            if(lPosts != null){
+                            if (lPosts != null) {
                                 lPosts.clear();
-                            } else{
+                            } else {
                                 lPosts = new ArrayList<>();
                             }
                             JSONObject jsonResponse = new JSONObject(response);
@@ -109,13 +125,14 @@ public class ViewPostFragment extends Fragment {
                                 for (int i = 0; i < posts.length(); i++) {
                                     JSONObject post = (JSONObject) posts.get(i);
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
-                                    if(!post.isNull("image")) {
+                                    if (!post.isNull("image")) {
                                         Bitmap x = getBitmapImage(post.getString("image"));
-                                        Log.e("IMAGEBITMAP",String.valueOf(sizeOf(x)));
+//                                        Log.e("IMAGEBITMAP",String.valueOf(sizeOf(x)));
                                         uPost.setImage(x);
                                     }
                                     lPosts.add(uPost);
                                 }
+                                Log.e("LPOSTS SIZE ", String.valueOf(lPosts.size()));
                                 addContentToList(lPosts);
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts", Toast.LENGTH_SHORT).show();
@@ -141,6 +158,9 @@ public class ViewPostFragment extends Fragment {
                 if (data != null) {
                     params.put("uid", data);
                 }
+
+                params.put("offset", String.valueOf(offset));
+                params.put("limit", String.valueOf(LIMIT));
                 return params;
             }
         };
@@ -153,17 +173,29 @@ public class ViewPostFragment extends Fragment {
 
     private void addContentToList(List<Post> values) {
         try {
-            ListView listView = view.findViewById(R.id.list);
-            ArrayAdapter adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
-            listView.setAdapter(adapter);
-        } catch ( NullPointerException e){
+            if (adapter == null) {
+                adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
+                listView.setAdapter(adapter);
+                isl.completed();
+            } else {
+
+                int firstPosition = listView.getFirstVisiblePosition();
+                adapter.updateData(values);
+                Log.e(String.valueOf(firstPosition), "      " + String.valueOf(firstPosition + values.size()));
+                adapter.notifyDataSetChanged(); //notifies any View reflecting data to refresh
+                listView.setSelection(firstPosition + values.size());
+
+                if(values.size()>0)
+                    isl.completed();
+            }
+        } catch (NullPointerException e) {
             Log.e("NULL pTR", e.toString());
         }
     }
 
-    private Bitmap getBitmapImage(String imageString){
+    private Bitmap getBitmapImage(String imageString) {
         byte[] decodedBytes = Base64.decode(
-                imageString.substring(imageString.indexOf(",")  + 1),
+                imageString.substring(imageString.indexOf(",") + 1),
                 Base64.DEFAULT
         );
 

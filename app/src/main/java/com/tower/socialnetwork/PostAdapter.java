@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PostAdapter extends ArrayAdapter<Post> {
@@ -46,6 +47,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
         this.moreCommentPressed = new ArrayList<>(Arrays.asList(new Boolean[data.size()]));
         Collections.fill(this.moreCommentPressed, Boolean.FALSE);
     }
+
+
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -80,6 +83,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 Bitmap bitmapImage = i.getImage();
                 image.setVisibility(View.GONE);
                 if (bitmapImage != null) {
+                    image.setImageBitmap(null);
                     image.setImageBitmap(bitmapImage);
                     image.setVisibility(View.VISIBLE);
                 }
@@ -158,6 +162,18 @@ public class PostAdapter extends ArrayAdapter<Post> {
             }
         }
         return v;
+    }
+
+    public void updateData(List<Post> values){
+
+        for(Post v: values){
+            insert(v,0);
+        }
+
+        ArrayList<Boolean> temp = new ArrayList<>(Arrays.asList(new Boolean[values.size()]));
+        Collections.fill(temp, Boolean.FALSE);
+        this.moreCommentPressed.addAll(temp);
+
     }
 
     private void addComment(final int position, final String commentString, final Integer postid) {
