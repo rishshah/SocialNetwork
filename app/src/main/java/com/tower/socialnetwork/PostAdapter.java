@@ -49,8 +49,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
         Collections.fill(this.moreCommentPressed, Boolean.FALSE);
     }
 
-
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
@@ -105,7 +103,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 public void onClick(View vi) {
                     final String commentString = ((EditText) vCopy.findViewById(R.id.new_comment_text)).getText().toString();
                     if (TextUtils.isEmpty(commentString)) {
-                        ((EditText) vCopy.findViewById(R.id.new_comment_text)).setError("Error");
+                        ((EditText) vCopy.findViewById(R.id.new_comment_text)).setError("Comment cannot be empty");
                         return;
                     }
                     addComment(position, commentString, postid);
@@ -168,7 +166,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
     public void updateData(List<Post> values){
         for(Post v: values){
             insert(v,0);
-            this.moreCommentPressed.add(0,new Boolean(Boolean.FALSE));
+            this.moreCommentPressed.add(0,Boolean.valueOf(Boolean.FALSE));
         }
     }
 

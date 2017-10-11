@@ -89,7 +89,6 @@ public class SearchResultsFragment extends Fragment implements HomeActivity.Data
         String loginUrl = Constants.SERVER_URL + Constants.SEARCH;
         mSearchResults.showProgress(true);
         Log.e("TAG", loginUrl);
-        // Request a json response from the provided URL.
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {

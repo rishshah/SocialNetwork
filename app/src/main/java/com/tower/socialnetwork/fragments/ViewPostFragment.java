@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -93,9 +92,7 @@ public class ViewPostFragment extends Fragment {
         super.onAttach(context);
         try {
             mOnViewPostListener = (OnViewPostListener) context;
-            Bundle bundle = this.getArguments();
             mQueue = Volley.newRequestQueue(getActivity());
-//            showPosts(bundle.getString("action"), bundle.getString("data"),0);
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnCreatePostListener");
         }
@@ -127,7 +124,7 @@ public class ViewPostFragment extends Fragment {
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if (!post.isNull("image")) {
                                         Bitmap x = getBitmapImage(post.getString("image"));
-//                                        Log.e("IMAGEBITMAP",String.valueOf(sizeOf(x)));
+                                        Log.e("IMAGE BITMAP",String.valueOf(sizeOf(x)));
                                         uPost.setImage(x);
                                     }
                                     lPosts.add(uPost);
@@ -158,7 +155,6 @@ public class ViewPostFragment extends Fragment {
                 if (data != null) {
                     params.put("uid", data);
                 }
-
                 params.put("offset", String.valueOf(offset));
                 params.put("limit", String.valueOf(LIMIT));
                 return params;
@@ -176,17 +172,18 @@ public class ViewPostFragment extends Fragment {
             if (adapter == null) {
                 adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
                 listView.setAdapter(adapter);
-                Log.e("NEW AD-----", String.valueOf(listView.getFirstVisiblePosition()));
                 isl.completed();
-                if(values.size()<LIMIT)
+                if(values.size()<LIMIT) {
                     isl.allPostsDone();
+                }
+                Log.e("NEW AD-----", String.valueOf(listView.getFirstVisiblePosition()));
             } else {
-                Log.e("OLD AD-----", String.valueOf(listView.getFirstVisiblePosition()));
                 int firstPosition = listView.getFirstVisiblePosition();
                 adapter.updateData(values);
-                Log.e(String.valueOf(firstPosition), "      " + String.valueOf(firstPosition + values.size()));
-                adapter.notifyDataSetChanged(); //notifies any View reflecting data to refresh
+                adapter.notifyDataSetChanged();
                 listView.setSelection(firstPosition + values.size());
+
+                Log.e("OLD AD-----", String.valueOf(firstPosition) + "      " + String.valueOf(firstPosition + values.size()));
 
                 if(values.size()>0)
                     isl.completed();
@@ -194,7 +191,7 @@ public class ViewPostFragment extends Fragment {
                     isl.allPostsDone();
             }
         } catch (NullPointerException e) {
-            Log.e("NULL pTR", e.toString());
+            Log.e("NULL PTR", e.toString());
         }
     }
 
