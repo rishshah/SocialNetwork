@@ -168,12 +168,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
     public void updateData(List<Post> values){
         for(Post v: values){
             insert(v,0);
+            this.moreCommentPressed.add(0,new Boolean(Boolean.FALSE));
         }
-
-        ArrayList<Boolean> temp = new ArrayList<>(Arrays.asList(new Boolean[values.size()]));
-        Collections.fill(temp, Boolean.FALSE);
-        this.moreCommentPressed.addAll(temp);
-
     }
 
     private void addComment(final int position, final String commentString, final Integer postid) {

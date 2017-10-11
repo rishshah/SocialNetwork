@@ -187,6 +187,8 @@ public class ViewPostFragment extends Fragment {
 
                 if(values.size()>0)
                     isl.completed();
+                if(values.size()<LIMIT)
+                    isl.allPostsDone();
             }
         } catch (NullPointerException e) {
             Log.e("NULL pTR", e.toString());
