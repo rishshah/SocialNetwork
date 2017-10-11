@@ -176,9 +176,12 @@ public class ViewPostFragment extends Fragment {
             if (adapter == null) {
                 adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
                 listView.setAdapter(adapter);
+                Log.e("NEW AD-----", String.valueOf(listView.getFirstVisiblePosition()));
                 isl.completed();
+                if(values.size()<LIMIT)
+                    isl.allPostsDone();
             } else {
-
+                Log.e("OLD AD-----", String.valueOf(listView.getFirstVisiblePosition()));
                 int firstPosition = listView.getFirstVisiblePosition();
                 adapter.updateData(values);
                 Log.e(String.valueOf(firstPosition), "      " + String.valueOf(firstPosition + values.size()));

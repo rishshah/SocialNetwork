@@ -28,7 +28,7 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
         if (!finished && !loading && visibleThreshold >= firstVisibleItem ) {
             // I load the next page of gigs using a background task,
             // but you can call any function here.
-            Log.e("ONSCROLL firstVisibl",String.valueOf(firstVisibleItem));
+            Log.e("ONSCROLL firstVisible",String.valueOf(firstVisibleItem));
             getMorePosts(currentPage + 1);
             loading = true;
         }
