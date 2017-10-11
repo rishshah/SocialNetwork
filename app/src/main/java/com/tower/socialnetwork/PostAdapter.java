@@ -60,7 +60,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
             v = inflater.inflate(R.layout.item_post, null);
         }
 
-		Post i = objects.get(position);
+        Post i = objects.get(position);
         if (i != null) {
 
             TextView post = v.findViewById(R.id.post);
@@ -93,9 +93,9 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
             final Integer postid = i.getPostId();
             final View vCopy = v;
-            if(i.getCommentList().size() <= 3){
+            if (i.getCommentList().size() <= 3) {
                 moreCommentButton.setVisibility(View.GONE);
-            } else{
+            } else {
                 moreCommentButton.setVisibility(View.VISIBLE);
             }
             commentButton.setOnClickListener(new View.OnClickListener() {
@@ -163,10 +163,10 @@ public class PostAdapter extends ArrayAdapter<Post> {
         return v;
     }
 
-    public void updateData(List<Post> values){
-        for(Post v: values){
-            insert(v,0);
-            this.moreCommentPressed.add(0,Boolean.valueOf(Boolean.FALSE));
+    public void updateData(List<Post> values) {
+        for (Post v : values) {
+            insert(v, 0);
+            this.moreCommentPressed.add(0, Boolean.FALSE);
         }
     }
 

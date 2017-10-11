@@ -1,8 +1,6 @@
 package com.tower.socialnetwork;
 
-
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.app.FragmentManager;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -34,13 +32,15 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener, SearchResults{
+public class HomeActivity extends AppCompatActivity implements AddPostFragment.OnCreatePostListener, ViewPostFragment.OnViewPostListener, SearchResults {
     private View mProgressView;
     private DataToSearchFragment mData;
     private SearchView mSearchView;
     private MenuItem mSearchMenuItem;
     private PermissionCallback permissionCallback;
     private RequestQueue mQueue;
+    private boolean firstBackPressed = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
         mProgressView = findViewById(R.id.home_progress);
         mQueue = Volley.newRequestQueue(this);
-        displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true,null);
+        displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, true, null);
     }
 
     @Override
@@ -89,13 +89,14 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        firstBackPressed = false;
         switch (item.getItemId()) {
             case R.id.home:
-                displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, false,null);
+                displayViewPostFragment(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS, false, null);
                 return true;
 
             case R.id.my_posts:
-                displayViewPostFragment(Constants.SEE_MY_POSTS, false,null);
+                displayViewPostFragment(Constants.SEE_MY_POSTS, false, null);
                 return true;
 
             case R.id.add_post_button:
@@ -145,7 +146,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                if(imageString != null) {
+                if (imageString != null) {
                     params.put("image", imageString);
                 }
                 params.put("content", postText);
@@ -158,9 +159,9 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     @Override
     public void followUser(final String user, final boolean follow) {
         String loginUrl = Constants.SERVER_URL;
-        if(follow) {
+        if (follow) {
             loginUrl += Constants.FOLLOW;
-        } else{
+        } else {
             loginUrl += Constants.UNFOLLOW;
         }
         showProgress(true);
@@ -173,13 +174,13 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status")) {
-                                if(follow){
+                                if (follow) {
                                     Toast.makeText(getApplicationContext(), "Now following " + user, Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(getApplicationContext(), user + " Unfollowed", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(getApplicationContext(),  jsonResponse.getString("message") + " " + user, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), jsonResponse.getString("message") + " " + user, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             Log.e("TAG--------JSON--EX--", e.toString());
@@ -215,7 +216,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
     @Override
     public void closeSearchView() {
-        if(mSearchView != null && mSearchMenuItem != null) {
+        if (mSearchView != null && mSearchMenuItem != null) {
             mSearchView.clearFocus();
             mSearchView.onActionViewCollapsed();
             mSearchMenuItem.collapseActionView();
@@ -225,10 +226,10 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if(permissionCallback != null){
+        if (permissionCallback != null) {
             permissionCallback.permissionGrantedCallback(requestCode, permissions, grantResults);
-        } else{
-            Log.e("TAG---D--ERR PCB","");
+        } else {
+            Log.e("TAG---D--ERR PCB", "");
         }
     }
 
@@ -267,6 +268,17 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!firstBackPressed) {
+            Toast.makeText(getApplicationContext(), "Press back again to logout and exit", Toast.LENGTH_SHORT).show();
+            firstBackPressed = true;
+        } else{
+            logout();
+            finishAffinity();
+        }
+    }
+
     private void displaySearchFragment() {
         getSupportActionBar().setTitle("Search User");
         FragmentManager fragmentManager = getFragmentManager();
@@ -279,7 +291,6 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
     private void logout() {
         String loginUrl = Constants.SERVER_URL + "Logout";
         showProgress(true);
-        // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {
                     @Override

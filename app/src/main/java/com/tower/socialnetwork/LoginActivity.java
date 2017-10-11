@@ -61,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             mPassword.setError(getString(R.string.error_password_required));
             cancel = true;
         }
-
         // Check for a valid username
         if (TextUtils.isEmpty(username)) {
             mUsername.setError(getString(R.string.error_username_required));
@@ -78,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         String loginUrl = Constants.SERVER_URL + "Login";
         Log.e("TAG", loginUrl);
-        // Request a json response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl,
                 new Response.Listener<String>() {
                     @Override
@@ -126,21 +124,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToHome() {
         Intent intent = new Intent(this, HomeActivity.class);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 0);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                if (data.getStringExtra("action").equals(Constants.BACK)) {
-                    finish();
-                } else if (data.getStringExtra("action").equals(Constants.LOGOUT)) {
-                    Toast.makeText(getApplicationContext(), "Successfully Logged Out", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
+        Toast.makeText(getApplicationContext(), "Successfully Logged Out", Toast.LENGTH_SHORT).show();
     }
 
     private void showProgress(boolean is_visible) {
