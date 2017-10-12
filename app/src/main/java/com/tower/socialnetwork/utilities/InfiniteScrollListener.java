@@ -8,7 +8,7 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
     private int limit = 10;
     private boolean start = false;
     private int visibleThreshold = 2;
-    private int currentPage = 0;
+    private int offset = 0;
     private boolean loading = false;
     private boolean finished = false;
 
@@ -29,8 +29,8 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
                 getMorePosts(-1);
                 Log.e(" INIT OFFSET asked", "-1");
             } else {
-                getMorePosts(limit * currentPage);
-                Log.e(" OFFSET TO ASK FOR", String.valueOf(limit * currentPage));
+                getMorePosts(offset);
+                Log.e(" OFFSET TO ASK FOR", String.valueOf(offset));
             }
             loading = true;
         }
@@ -40,7 +40,7 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     public void completed(int offset){
         loading = false;
-        currentPage = offset;
+        this.offset = offset;
     }
 
     public void allPostsDone(){

@@ -130,7 +130,7 @@ public class ViewPostFragment extends Fragment {
                                     lPosts.add(uPost);
                                 }
                                 Log.e("LPOSTS SIZE ", String.valueOf(lPosts.size()));
-                                addContentToList(lPosts, jsonResponse.getInt("offset"));
+                                addContentToList(lPosts, jsonResponse.getInt("offset") + lPosts.size());
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts", Toast.LENGTH_SHORT).show();
                             }
@@ -167,12 +167,12 @@ public class ViewPostFragment extends Fragment {
         void showProgress(boolean is_visible);
     }
 
-    private void addContentToList(List<Post> values, int offset) {
+    private void addContentToList(List<Post> values, int newOffset) {
         try {
             if (adapter == null) {
                 adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
                 listView.setAdapter(adapter);
-                isl.completed(offset/LIMIT);
+                isl.completed(newOffset);
                 if (values.size() < LIMIT) {
                     isl.allPostsDone();
                 }
@@ -186,11 +186,11 @@ public class ViewPostFragment extends Fragment {
                 Log.e("OLD AD-----", String.valueOf(firstPosition) + "      " + String.valueOf(firstPosition + values.size()));
 
                 if (values.size() > 0)
-                    isl.completed(offset / LIMIT);
+                    isl.completed(newOffset);
                 if (values.size() < LIMIT)
                     isl.allPostsDone();
             }
-            Log.e("NEW PAGE-----", String.valueOf(offset / LIMIT));
+            Log.e("NEW PAGE-----", String.valueOf(newOffset));
         } catch (NullPointerException e) {
             Log.e("NULL PTR", e.toString());
         }
