@@ -5,7 +5,8 @@ import android.util.Log;
 import android.widget.AbsListView;
 
 public abstract class InfiniteScrollListener implements AbsListView.OnScrollListener {
-
+    private int limit = 10;
+    private boolean start = false;
     private int visibleThreshold = 2;
     private int currentPage = 0;
     private boolean loading = false;
@@ -13,22 +14,33 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
 
     public InfiniteScrollListener() {
     }
+    public InfiniteScrollListener(int limit, boolean start) {
+        this.limit = limit;
+        this.start = start;
+    }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem,
                          int visibleItemCount, int totalItemCount) {
         if (!finished && !loading && visibleThreshold >= firstVisibleItem ) {
             Log.e("ON SCROLL firstVisible",String.valueOf(firstVisibleItem));
-            getMorePosts(currentPage + 1);
+            if(start){
+                start = false;
+                getMorePosts(-1);
+                Log.e(" INIT OFFSET asked", "-1");
+            } else {
+                getMorePosts(limit * currentPage);
+                Log.e(" OFFSET TO ASK FOR", String.valueOf(limit * currentPage));
+            }
             loading = true;
         }
     }
 
     public abstract void getMorePosts(int i);
 
-    public void completed(){
+    public void completed(int offset){
         loading = false;
-        currentPage++;
+        currentPage = offset;
     }
 
     public void allPostsDone(){

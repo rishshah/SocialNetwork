@@ -1,7 +1,6 @@
 package com.tower.socialnetwork.fragments;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -54,15 +52,12 @@ public class ViewPostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.list_fragment, container, false);
-        lPosts = new ArrayList<>();
         listView = view.findViewById(R.id.list);
-        adapter = null;
-        isl = new InfiniteScrollListener() {
+        isl = new InfiniteScrollListener(LIMIT, getArguments().getBoolean("firstTime")) {
             @Override
             public void getMorePosts(int i) {
                 Bundle bundle = getArguments();
-                Log.e(" OFFSET TO ASK FOR", String.valueOf(LIMIT * (i - 1)));
-                showPosts(bundle.getString("action"), bundle.getString("data"), LIMIT * (i - 1));
+                showPosts(bundle.getString("action"), bundle.getString("data"), i);
             }
         };
         listView.setOnScrollListener(isl);
@@ -95,6 +90,9 @@ public class ViewPostFragment extends Fragment {
         try {
             mOnViewPostListener = (OnViewPostListener) context;
             mQueue = Volley.newRequestQueue(getActivity());
+            lPosts = new ArrayList<>();
+            adapter = null;
+
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnCreatePostListener");
         }
@@ -126,13 +124,13 @@ public class ViewPostFragment extends Fragment {
                                     Post uPost = new Post(post.getString("uid"), post.getString("name"), post.getInt("postid"), post.getString("text"), post.getString("timestamp"), post.getJSONArray("Comment"));
                                     if (!post.isNull("image")) {
                                         Bitmap x = getBitmapImage(post.getString("image"));
-                                        Log.e("IMAGE BITMAP",String.valueOf(sizeOf(x)));
+                                        Log.e("IMAGE BITMAP", String.valueOf(sizeOf(x)));
                                         uPost.setImage(x);
                                     }
                                     lPosts.add(uPost);
                                 }
                                 Log.e("LPOSTS SIZE ", String.valueOf(lPosts.size()));
-                                addContentToList(lPosts);
+                                addContentToList(lPosts, jsonResponse.getInt("offset"));
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts", Toast.LENGTH_SHORT).show();
                             }
@@ -169,13 +167,13 @@ public class ViewPostFragment extends Fragment {
         void showProgress(boolean is_visible);
     }
 
-    private void addContentToList(List<Post> values) {
+    private void addContentToList(List<Post> values, int offset) {
         try {
             if (adapter == null) {
                 adapter = new PostAdapter(getActivity(), R.layout.item_post, new ArrayList<>(values));
                 listView.setAdapter(adapter);
-                isl.completed();
-                if(values.size()<LIMIT) {
+                isl.completed(offset/LIMIT);
+                if (values.size() < LIMIT) {
                     isl.allPostsDone();
                 }
                 Log.e("NEW AD-----", String.valueOf(listView.getFirstVisiblePosition()));
@@ -187,11 +185,12 @@ public class ViewPostFragment extends Fragment {
 
                 Log.e("OLD AD-----", String.valueOf(firstPosition) + "      " + String.valueOf(firstPosition + values.size()));
 
-                if(values.size()>0)
-                    isl.completed();
-                if(values.size()<LIMIT)
+                if (values.size() > 0)
+                    isl.completed(offset / LIMIT);
+                if (values.size() < LIMIT)
                     isl.allPostsDone();
             }
+            Log.e("NEW PAGE-----", String.valueOf(offset / LIMIT));
         } catch (NullPointerException e) {
             Log.e("NULL PTR", e.toString());
         }

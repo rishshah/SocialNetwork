@@ -259,6 +259,7 @@ public class HomeActivity extends AppCompatActivity implements AddPostFragment.O
         Bundle bundle = new Bundle();
         bundle.putString("action", action);
         bundle.putString("data", data);
+        bundle.putBoolean("firstTime", add);
         fragment.setArguments(bundle);
 
         if (add) {
