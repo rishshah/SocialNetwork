@@ -98,7 +98,7 @@ public class ViewPostFragment extends Fragment {
         }
     }
 
-    private void showPosts(String action, final String data, final int offset) {
+    private void showPosts(final String action, final String data, final int offset) {
         if (mQueue == null) {
             mQueue = Volley.newRequestQueue(getActivity());
         }
@@ -130,7 +130,11 @@ public class ViewPostFragment extends Fragment {
                                     lPosts.add(uPost);
                                 }
                                 Log.e("LPOSTS SIZE ", String.valueOf(lPosts.size()));
-                                addContentToList(lPosts, jsonResponse.getInt("offset") + lPosts.size());
+                                if(Constants.SEE_MY_PLUS_FOLLOWERS_POSTS.equals(action)){
+                                    addContentToList(lPosts, jsonResponse.getInt("offset") + lPosts.size());
+                                } else{
+                                    addContentToList(lPosts, 0 + lPosts.size());
+                                }
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Failed to load your posts", Toast.LENGTH_SHORT).show();
                             }
